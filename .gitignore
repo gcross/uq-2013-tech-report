@@ -1,1 +1,8 @@
-paper.bib.bak
+*.aux
+*.bak
+*.bbl
+*.blg
+*.log
+*.pdf
+*.swp
+*.synctex.gz
