@@ -1,4 +1,22 @@
-\documentclass{article}
+\documentclass{report}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amstext}
+
+\usepackage{comment}
+
+\newcommand{\paren}[1]{\left(#1\right)}
+\newcommand{\biggparen}[1]{\bigg(#1\bigg)}
+
+\newcommand{\bra}[1]{\left<#1\right|}
+\newcommand{\ket}[1]{\left|#1\right>}
+\newcommand{\braket}[2]{\left<#1|#2\right>}
+\newcommand{\ketbra}[2]{\left|#2\right>\!\!\left<#1\right|}
+
+\newcommand{\tr}{\text{\textbf{tr}}\,}
+
+\newcommand{\Z}{\mathbb{Z}}
 
 \begin{document}
 
@@ -16,6 +34,32 @@ In this report, we present our work in using these methods as the basis of simul
 
 \part{1D Simulation Algorithm}
 \label{1dsim}
+
+In this part we review the 1D algorithm presented in \cite{Crosswhite2008}.  We do this rather than skipping to the 2D generalization because both 1D and 2D share characteristics in common and 1D is simpler so it is worth taking the time to thoroughly review it before generaalizing it to 2D.
+
+Conceptually, we assume that we are working with a system whose ground state can be well-approximated by an infinitely long (in both directions) chain of site tensors $A$, as illustrated in [].  Informally, the mathematical representation of this wave function is given by
+\begin{equation}
+\label{bi-inf-1d-state-a}
+\psi(\dots,\alpha_{-1},\alpha_{0},\alpha_1,\dots)= \cdots A^{\alpha_{-1}} \cdot A^{\alpha_0}\cdot A^{\alpha_1}\cdot A^{\alpha_2} \cdots,
+\end{equation}
+where the left-hand side is the wave function evaluated with a value for each observable in the system (which has an infinite number of of observables), and the right-hand side has an infinite product of matrices, $\prod_{i=-\infty}^{+\infty} A^{\alpha_i},$ where $A^{\alpha}$ is the matrix obtained by taking the rank-3 tensor $A$ and slicing it for a given value of the physical dimension, i.e. $(A^\alpha)_{ij}\equiv A^\alpha_{ij}$.
+
+For the sake of brevity, we rewrite \ref{bi-inf-1d-state-a} as
+\begin{equation}
+\label{bi-inf-1d-state-b}
+\psi(\{\alpha_i\}_{i\in\Z}) = \prod_{i\in\Z} A^{\alpha_i},
+\end{equation}
+where $\Z$ is the set of integers of $\{\alpha_i\}_{i\in\Z}$ is a bi-infinite sequence of $\alpha_i$'s.
+
+In general the right-hand-side of \ref{bi-inf-1d-state-b} will not converge, but it will for special values of $A$ and $\{\alpha_i\}_{i\in\Z}$.  For example, if $A^\alpha_{ij}=M_{ij}$ where $M$ is an idempotent matrix, then $\psi(\{\alpha_i\}_{i\in\Z})=\prod_{i\in\Z} A^i = \prod_{i\in\Z} M = M$.  Unfortunately, this result takes the form of a matrix when what we would really like is a complex number representing the amplitude of the wave in this configuration.  To get a complex number, we need to apply boundary conditions.  We have a couple of choices.  First, we can apply periodic boundary conditions, which gives us $\psi(\{\alpha_i\}_{i\in\Z})=\tr M$.  Second, we can apply open boundary conditions $L$ and $R$ so that $\psi(\{\alpha_i\}_{i\in\Z})=L\cdot M\cdot R$  In this case, our result strongly depends on our choice of $L$ and $R$.
+
+The preceding discussion shows that it is possible for there to be enough structure in the system that the product converges, but its requirement that $A^\alpha$ be completely independent of $\alpha$ is completely unrealistic, but without this structure we need to arrange for every choice of $\{\alpha_i\}_{i\in\Z}$ result in a converging product, which is non-trivial.
+
+Fortunately, in practice we don't actually need or even want the full wave function, only its expectation value with respect to various operators.  For example, let $Z$ be the Pauli Z spin matrix;  then the expectation with respect to $Z$ at site 0 is equal to
+$$\sum_{\{\alpha_k\in\{\uparrow,\downarrow\}\}_{k\in\Z}\atop\alpha'_0\in\{\uparrow,\downarrow\}}\psi\paren{\{\alpha_k\}_{k\in\Z}}\psi^*\paren{\{\alpha_i\}_{i\in\Z/\{0\}};\alpha'_0} Z_{\alpha_0\alpha'_0}=\tr(M\cdot Z),$$ where $$M_{\alpha_0\alpha'_0}=\sum_{\{\alpha_k\in\{\uparrow,\downarrow\}\}_{k\in\Z}}\psi\paren{\{\alpha_k\}_{k\in\Z}}\cdot\psi^*\paren{\{\alpha_i\}_{i\in\Z/\{0\}};\alpha'_0}.$$
+You can think of the above equations as being like a zipper that traces all the observables except for the one at site zero, forming $M$.
+
+This notion of rewriting into a dot product between a matrix that encodes the \emph{environment} of a given site and a matrix that represents the expectation of a 1-site operator at that site is a very powerful one because it gives us a way to work with infinite systems.  We now formalize this insight as follows.
 
 \part{2D Simulation Algorithm}
 \label{2dsim}
