@@ -55,11 +55,11 @@ In general the right-hand-side of \ref{bi-inf-1d-state-b} will not converge, but
 
 The preceding discussion shows that it is possible for there to be enough structure in the system that the product converges, but its requirement that $A^\alpha$ be completely independent of $\alpha$ is completely unrealistic, but without this structure we need to arrange for every choice of $\{\alpha_i\}_{i\in\Z}$ result in a converging product, which is non-trivial.
 
-Fortunately, in practice we don't actually need or even want the full wave function, only its expectation value with respect to various operators.  For example, let $Z$ be the Pauli Z spin matrix;  then the expectation with respect to $Z$ at site 0 is equal to
+Fortunately, in practice we don't actually need or even want the full wave function, only its expectation value with respect to various operators.  For example, assume that we are working with qubits\footnote{All of the results presented generalize for arbitrary qudits, but we choose to work with qubits specifically for concreteness and to keep things simple.} and let $Z$ be the Pauli Z spin matrix;  then the expectation with respect to $Z$ at site 0 is equal to
 $$\sum_{\{\alpha_k\in\{\uparrow,\downarrow\}\}_{k\in\Z}\atop\alpha'_0\in\{\uparrow,\downarrow\}}\psi\paren{\{\alpha_k\}_{k\in\Z}}\psi^*\paren{\{\alpha_i\}_{i\in\Z/\{0\}};\alpha'_0} Z_{\alpha_0\alpha'_0}=\tr(M\cdot Z),$$ where $$M_{\alpha_0\alpha'_0}=\sum_{\{\alpha_k\in\{\uparrow,\downarrow\}\}_{k\in\Z}}\psi\paren{\{\alpha_k\}_{k\in\Z}}\cdot\psi^*\paren{\{\alpha_i\}_{i\in\Z/\{0\}};\alpha'_0}.$$
 You can think of the above equations as being like a zipper that traces all the observables except for the one at site zero, forming $M$.
 
-This notion of rewriting into a dot product between a matrix that encodes the \emph{environment} of a given site and a matrix that represents the expectation of a 1-site operator at that site is a very powerful one because it gives us a way to work with infinite systems.  We now formalize this insight as follows.
+This notion of rewriting into a dot product between a matrix that encodes the \emph{environment} of a given site and a matrix that represents the expectation of a 1-site operator at that site is a very powerful one because it gives us a way to work with infinite systems.  We now formalize this insight as follows.  Let the environment tensor $E_{(ii')(jj')}:=\sum_{\alpha\in\{\uparrow,\downarrow\}}A^\alpha_{ij}A^{\alpha*}_{i'j'}.$
 
 \part{2D Simulation Algorithm}
 \label{2dsim}
