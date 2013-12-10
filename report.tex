@@ -17,6 +17,8 @@
 \newcommand{\seq}[1]{\left<#1\right>}
 \newcommand{\tr}{\text{\textbf{tr}}\,}
 
+\newcommand{\expect}[1]{\left<#1\right>}
+
 \newcommand{\Z}{\mathbb{Z}}
 
 \begin{document}
@@ -40,31 +42,74 @@ In this part we review the 1D algorithm presented in \cite{Crosswhite2008}.  We 
 
 \section{Introduction}
 
-Conceptually, we assume that we are working with a system whose ground state can be well-approximated by an infinitely long (in both directions) chain of site tensors $A$, as illustrated in [].  Informally, the mathematical representation of this wave function is given by
+The basic idea of this algorithm is that we maintain two kind of left and right environments --- one for computing the norm, and the other for computing expectations --- and the center site tensor.  At each iteration of the algorithm, we improve the center site (so that the energy of the system decreases) using an eigensolver, and then absorb it into the left or the right environments in order to improve them (so that they are a better approximation to the infinite environment).
+
+In the following sections we fill in the details on this.  First we discuss the basic idea behind th infinite matrix state ansatz.  Second, we show how canonicalization makes expectations be well-behaved.  Third, we talk about matrix product operators.  Fourth, we talk more about the environments used in the algorithm.
+
+\section{Basics}
+
+We assume that we are working with a system whose ground state can be well-approximated by an infinitely long (in both directions) chain of site tensors $A$, as illustrated in [].  Informally, the mathematical representation of this wave function is given by
 \begin{equation}
 \label{bi-inf-1d-state-a}
 \psi(\dots,\alpha_{-1},\alpha_{0},\alpha_1,\dots)= \cdots A^{\alpha_{-1}} \cdot A^{\alpha_0}\cdot A^{\alpha_1}\cdot A^{\alpha_2} \cdots,
 \end{equation}
 where the left-hand side is the wave function evaluated at a given value for each of the (infinitely many) observables, and the right-hand side is the infinite product of matrices, $\prod_{i=-\infty}^{+\infty} A^{\alpha_i},$ where $A^{\alpha}$ is the matrix obtained by taking the rank-3 tensor $A$ and slicing it for a given value of the physical dimension, i.e. $(A^\alpha)_{ij}\equiv A^\alpha_{ij}$.
 
-For the sake of brevity, we rewrite Eq. \ref{bi-inf-1d-state-a} as
+For the sake of brevity, we rewrite \eqref{bi-inf-1d-state-a} as
 \begin{equation}
 \label{bi-inf-1d-state-b}
 \psi(\seq{\alpha_i}) = \prod_{i\in\Z} A^{\alpha_i},
 \end{equation}
 where $\Z$ is the set of integers and $\seq{\alpha_i}$ is some bi-infinite sequence of spins (i.e. elements from $\{\uparrow,\downarrow\}$ or $\{0,1\}$, depending on which representation is more convenient).
 
-In general the right-hand-side of \ref{bi-inf-1d-state-b} will not converge, though it will for special values of $A$ and $\seq{\alpha_i}$.  For example, if $A^\alpha_{ij}=M_{ij}$ where $M$ is an idempotent matrix, then $\psi(\seq{\alpha_i})=\prod_{i\in\Z} A^{\alpha_i} = \prod_{i\in\Z} M = M$.  Unfortunately, this result takes the form of a matrix when what we would really like is a complex number representing the amplitude of the wave in this configuration.  To get a complex number, we need to apply boundary conditions.  We have a couple of choices.  First, we can apply periodic boundary conditions, which gives us $\psi(\{\alpha_i\}_{i\in\Z})=\tr M$.  Second, we can apply open boundary conditions $L$ and $R$ so that $\psi(\seq{\alpha_i})=L\cdot M\cdot R$  In this case, our result strongly depends on our choice of $L$ and $R$.
+In general the right-hand-side of \eqref{bi-inf-1d-state-b} will not converge, though it will for special values of $A$ and $\seq{\alpha_i}$.  For example, if $A^\alpha_{ij}=M_{ij}$ where $M$ is an idempotent matrix, then $\psi(\seq{\alpha_i})=\prod_{i\in\Z} A^{\alpha_i} = \prod_{i\in\Z} M = M$.  Unfortunately, this result takes the form of a matrix when what we would really like is a complex number representing the amplitude of the wave in this configuration.  To get a complex number, we need to apply boundary conditions.  We have a couple of choices.  First, we can apply periodic boundary conditions, which gives us $\psi(\{\alpha_i\}_{i\in\Z})=\tr M$.  Second, we can apply open boundary conditions $L$ and $R$ so that $\psi(\seq{\alpha_i})=L\cdot M\cdot R$  In this case, our result strongly depends on our choice of $L$ and $R$.
 
 The preceding discussion shows that it is possible for there to be enough structure in the system that the product converges, but its requirement that $A^\alpha$ be completely independent of $\alpha$ is completely unrealistic;  without this structure, though, we would need to arrange that every choice of $\seq{\alpha_i}$ results in a converging product, which is non-trivial.
 
+\begin{comment}
 Fortunately, in practice we don't actually need or even want the full wave function, only its expectation value with respect to various operators.  For example, assume that we are working with qubits\footnote{All of the results presented generalize for arbitrary qudits, but we choose to work with qubits specifically for concreteness and to keep things simple.} and let $Z$ be the Pauli Z spin matrix;  then the expectation with respect to $Z$ at site 0 is equal to
 $$\sum_{\seq{\alpha_i}}\sum_{\alpha'_0\in\{\uparrow,\downarrow\}}\psi\paren{\seq{\alpha_i}}\cdot\psi^*\paren{\seq{\begin{cases}\alpha_0' & i=0 \\ \alpha_i & \text{otherwise}\end{cases}}}\cdot Z_{\alpha_0\alpha'_0}=\tr(M\cdot Z),$$ where $$M_{\alpha_0\alpha'_0}=\sum_{\seq{\alpha_i}_{i\ne 0}}\psi\paren{\seq{\alpha_i}}\cdot\psi^*\paren{\seq{\begin{cases}\alpha_0' & i=0 \\ \alpha_i & \text{otherwise}\end{cases}}},$$
-which traces over all the observables except the one at site zero to form the matrix $M$.
+which traces over all the observables except the one at site zero to form the matrix $M$, which we call the \emph{environment} tensor because it contains the information from the rest of the system.  This notion of rewriting into a dot product between a matrix that encodes the \emph{environment} of a given site and a matrix that represents the expectation of a 1-site operator at that site is a very powerful one because it gives us a way to work with infinite systems.
+\end{comment}
+
+\section{Local Expectations and Canonicalization}
+
+Suppose we have a matrix product state defined by some single site tensor $A$, and we want to compute the expectation value of some single-site operator $O$.  We decompose the system into a saite and its left and right environments as follows.  First, we define the \emph{expectation} tensor to be $E^A(O_{(ii')(jj')}):=\sum_{\alpha,\alpha'\in\{\uparrow,\downarrow\}}A^{\alpha'*}_{ij}\cdot O_{\alpha',\alpha}\cdot A^\alpha_{i'j'}.$  With this notation we have that $\expect{O}=L\cdot (E^A(I))^\infty\cdot E(O)\cdot(E^A(I))^\infty\cdot R$, where $L$ and $R$ are the boundary vectors, needed for the overall expression to be a scalar.  Obviously this does not get us anywhere unless it is possible to compute $(E^A(I))^\infty$, so suppose now that $E^I$ has a maximum eigenvalue of 1 and that $L$ and $R$ are respectively associated left and right eigenvectors.  In this case, the result is easy:  we have that $\expect{O}=L\cdot E^O\cdot R$, which is manifestly finite and well-defined.  In fact, $L$ and $R$ act as the left and right environments of the center site because they contain all of the information of the system left and right of the center site that is needed to compute the expectation value.  Furthermore, this works for multi-site operators, i.e. $\expect{O_1\otimes O_2\cdots\otimes O_n} = L\cdot E^A(O_1)\cdot E^A(O_2)\cdots E^A(O_n)\cdot R$.
+
+Of course, this preceding discussion assumes that $E^A(I)$ is very well behaved, which will not be true in general.  Fortunately, we can \emph{make} it be well behaved.  To do this, we break transitional symmetry in the representation (though not in the state itself) and assume that there are tensors $A_L$, $A_M$ and $A_C$ such that \begin{equation}
+\label{eq:newform}
+\psi(\seq{\alpha_i}) = \paren{\prod_{i\in\Z^-}(A_L)^{\alpha_i}}\cdot (A_M)^{\alpha_0}\cdot \paren{\prod_{i\in\Z^+}(A_R)^{\alpha_i}},\end{equation}
+and furthermore $A_L$ is in left-canonical form and $A_R$ is in right-canonical form, which means that $E^{A_L}(I)$ and $E^{A_R}(I)$ both have a maximum eigenvalue of 1 and furthermore $A_L$ satisfies $\sum_{\alpha,i}(A_L^*)^{\alpha}_{ij}(A_L)^{\alpha}_{ij'}=\delta_{jj'}$ and $A_R$ satisfies $\sum_{\alpha,j}(A_R^*)^{\alpha}_{ij}(A_R)^{\alpha}_{i'j}=\delta_{ii'},$  which means that the (flattened) identity matrix is a left-eigenvector of $A_L$ and the right-eigenvector of $A_R$ that are both associated with eigenvalue 1.
+
+Rather than starting from a state that is not in canonical form and then canonicalizing it, we shall \emph{assume} that the state is in canonical form and then only apply operations to preserve this property.  The basic trick that we use is as follows.  First, assume that we have two adjacent copies of the middle site tensor, $A^M$.  Let $U\cdot S\cdot V$ be the singular value decomposition of $A^M$, and then define $A'^L:=U\cdot V$.  We now have that $A^L$ is in left-canonical form, but we need to modify $A^M$ so that the overall state has not changed.  We do this by noting that $A^M=A^L\cdot X$ where $X=V^\dagger\cdot S\cdot V$, so therefore if we let $A'^M:= X\cdot A^M$ then the new state with tensors $A'^L$ and $A'^M$ is equal to the old state with two copies of $A_M$.  We now let $L'_{jj'}:=\sum_{i,j',\alpha}L_{ii'}(A^*)^M_{ij} A^M_{i'j'}.$  Because $A'_L$ is in canonical form, we have that (flattened) $L$ is a left-eigenvector and so $L'=L$.
+
+\section{Operators}
+
+The use of matrix product operators is central to this approach because it allows us to represent complex operators in a simple, uniform way.
+
+
 
 \section{Environments}
 
-This notion of rewriting into a dot product between a matrix that encodes the \emph{environment} of a given site and a matrix that represents the expectation of a 1-site operator at that site is a very powerful one because it gives us a way to work with infinite systems.  We now formalize this insight as follows.  Let the environment tensor $E_{(ii')(jj')}:=\sum_{\alpha\in\{\uparrow,\downarrow\}}A^\alpha_{ij}A^{\alpha*}_{i'j'}.$
+Since we only have a finite amount of memory, we take environments and make them be the fundamental objects that we work with.  We need two environments: one for the norm of the state (i.e., the expectation of the identity operator), and the other for the expectation 
+
+In the case of computing the norm of the state, we do not actually need to store the left and right 
+
+Now that we have shown that it is possible to have well-behaved expectations if we assume that our system is in a canonical form, we now descri
+
+In the previous section we showed that systems are well-behaved if the site tensors are in canonical form.  We now show how using environments we can ensure that the system is always 
+
+Henceforth, we \emph{assume} that our system has the structure given in \eqref{newform}.  This is not ``cheating'' because during the simulation we will start with a trivial state (i.e. all non-physical dimensions of all tensors set to 1) that takes the form of
+
+\begin{comment}
+At this point we have pushed the necessary structure for well-behaved environments to $A_L$ and $A_R$.  We now \emph{assume} that they
+
+; fortunately there exists a transformation that computes $A_L$ and $A_R$ from $A$, and which furthermore in the infinite limit results in a state that is no different from the state consisting of only $A$'s.  The idea is as follows:  First, define $M_{(\alpha i)j}:=A^\alpha_{ij},$ that is flatten the $\alpha$ and $i$ index into a single index to form a matrix from the rank-3 tensor.  Now let $U\cdot S\cdot V$ be the singular value decomposition of $M$, and then define $A_L$ to be $U\cdot V$.  The fact that we have set all singular values to 1 and that $U$ and $V$ are unitaries together imply that $A_L$ is in left-canonical form.  An analogous procedure forms $A_R$ from $A$.
+
+We have shown how to construct $A_L$ and $A_R$ from $A$, but we still need to construct $A_M$ and then show that the new state is equal to the old state.  To do this, we start by assuming that we have a finite 
+
+We have shown that left- and right-canonical forms, respectively $A_L$ and $A_R$, can be derived from $A$, but we have yet to show that it is possible to replace all the left tensors with $A_L$ and the right tensors with $A_R$ while preserving the state.  To see this, first suppose that we have just two sites, both with tensor $A$.  Let $U\cdot S\cdot V$ be the singular value decomposition of $A$.  Then $A = A_L \cdot X$ where $X=V^\dagger\cdot S \cdot V$, where $V$ is unitary and $S$ is diagonal.  We thus define $A_M=X\cdot A$ and by construction it follows that the matrix product state with $A_L$ and $A_M$ is equal to the matrix product state with two $A$'s.  The same procedure allows us to derive $A_M$ and $A_R$ from two $A$'s.  Furthermore, for any finite system we can canonicalize the system starting at the left and the right and meeting at the middle
+\end{comment}
 
 \part{2D Simulation Algorithm}
 \label{2dsim}
