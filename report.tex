@@ -87,30 +87,6 @@ Rather than starting from a state that is not in canonical form and then canonic
 
 The use of matrix product operators is central to this approach because it allows us to represent complex operators in a simple, uniform way.
 
-
-
-\section{Environments}
-
-Since we only have a finite amount of memory, we take environments and make them be the fundamental objects that we work with.  We need two environments: one for the norm of the state (i.e., the expectation of the identity operator), and the other for the expectation 
-
-In the case of computing the norm of the state, we do not actually need to store the left and right 
-
-Now that we have shown that it is possible to have well-behaved expectations if we assume that our system is in a canonical form, we now descri
-
-In the previous section we showed that systems are well-behaved if the site tensors are in canonical form.  We now show how using environments we can ensure that the system is always 
-
-Henceforth, we \emph{assume} that our system has the structure given in \eqref{newform}.  This is not ``cheating'' because during the simulation we will start with a trivial state (i.e. all non-physical dimensions of all tensors set to 1) that takes the form of
-
-\begin{comment}
-At this point we have pushed the necessary structure for well-behaved environments to $A_L$ and $A_R$.  We now \emph{assume} that they
-
-; fortunately there exists a transformation that computes $A_L$ and $A_R$ from $A$, and which furthermore in the infinite limit results in a state that is no different from the state consisting of only $A$'s.  The idea is as follows:  First, define $M_{(\alpha i)j}:=A^\alpha_{ij},$ that is flatten the $\alpha$ and $i$ index into a single index to form a matrix from the rank-3 tensor.  Now let $U\cdot S\cdot V$ be the singular value decomposition of $M$, and then define $A_L$ to be $U\cdot V$.  The fact that we have set all singular values to 1 and that $U$ and $V$ are unitaries together imply that $A_L$ is in left-canonical form.  An analogous procedure forms $A_R$ from $A$.
-
-We have shown how to construct $A_L$ and $A_R$ from $A$, but we still need to construct $A_M$ and then show that the new state is equal to the old state.  To do this, we start by assuming that we have a finite 
-
-We have shown that left- and right-canonical forms, respectively $A_L$ and $A_R$, can be derived from $A$, but we have yet to show that it is possible to replace all the left tensors with $A_L$ and the right tensors with $A_R$ while preserving the state.  To see this, first suppose that we have just two sites, both with tensor $A$.  Let $U\cdot S\cdot V$ be the singular value decomposition of $A$.  Then $A = A_L \cdot X$ where $X=V^\dagger\cdot S \cdot V$, where $V$ is unitary and $S$ is diagonal.  We thus define $A_M=X\cdot A$ and by construction it follows that the matrix product state with $A_L$ and $A_M$ is equal to the matrix product state with two $A$'s.  The same procedure allows us to derive $A_M$ and $A_R$ from two $A$'s.  Furthermore, for any finite system we can canonicalize the system starting at the left and the right and meeting at the middle
-\end{comment}
-
 \part{2D Simulation Algorithm}
 \label{2dsim}
 
