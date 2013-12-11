@@ -4,6 +4,8 @@
 \usepackage{amssymb}
 \usepackage{amstext}
 
+\usepackage{clrscode}
+
 \usepackage{comment}
 
 \newcommand{\paren}[1]{\left(#1\right)}
@@ -62,7 +64,7 @@ For the sake of brevity, we rewrite \eqref{bi-inf-1d-state-a} as
 \end{equation}
 where $\Z$ is the set of integers and $\seq{\alpha_i}$ is some bi-infinite sequence of spins (i.e. elements from $\{\uparrow,\downarrow\}$ or $\{0,1\}$, depending on which representation is more convenient).
 
-In general the right-hand-side of \eqref{bi-inf-1d-state-b} will not converge, though it will for special values of $A$ and $\seq{\alpha_i}$.  For example, if $A^\alpha_{ij}=M_{ij}$ where $M$ is an idempotent matrix, then $\psi(\seq{\alpha_i})=\prod_{i\in\Z} A^{\alpha_i} = \prod_{i\in\Z} M = M$.  Unfortunately, this result takes the form of a matrix when what we would really like is a complex number representing the amplitude of the wave in this configuration.  To get a complex number, we need to apply boundary conditions.  We have a couple of choices.  First, we can apply periodic boundary conditions, which gives us $\psi(\{\alpha_i\}_{i\in\Z})=\tr M$.  Second, we can apply open boundary conditions $L$ and $R$ so that $\psi(\seq{\alpha_i})=L\cdot M\cdot R$  In this case, our result strongly depends on our choice of $L$ and $R$.
+In general the right-hand-side of \eqref{bi-inf-1d-state-b} will not converge, though it will for special values of $A$ and $\seq{\alpha_i}$.  For example, if $A^\alpha_{ij}=M_{ij}$ where $M$ is an idempotent matrix, then $\psi(\seq{\alpha_i})=\prod_{i\in\Z} A^{\alpha_i} = \prod_{i\in\Z} M = M$.  Unfortunately, this result takes the form of a matrix when what we would really like is a complex number representing the amplitude of the wave in this configuration.  To get a complex number, we need to apply boundary conditions.  We have a couple of choices.  First, we can apply periodic boundary conditions, which gives us $\psi(\{\alpha_i\}_{i\in\Z})=\tr M$.  Second---the approach that we use in this paper---we can apply open boundary conditions $L$ and $R$ so that $\psi(\seq{\alpha_i})=L\cdot M\cdot R$  In this case, our result strongly depends on our choice of $L$ and $R$; as we will see in the following section, the (flattened) identity matrix is a good choice for both boundaries.
 
 The preceding discussion shows that it is possible for there to be enough structure in the system that the product converges, but its requirement that $A^\alpha$ be completely independent of $\alpha$ is completely unrealistic;  without this structure, though, we would need to arrange that every choice of $\seq{\alpha_i}$ results in a converging product, which is non-trivial.
 
@@ -85,7 +87,53 @@ Rather than starting from a state that is not in canonical form and then canonic
 
 \section{Operators}
 
-The use of matrix product operators is central to this approach because it allows us to represent complex operators in a simple, uniform way.
+Matrix product operators are a natural extensionion of matrix product states where each site tensor, $O^{\alpha'\alpha}_{ij}$ is a rank-4 tensor with two physical dimensions instead of one.  The expression of the operator is defined analogous to the wave function, namely,$$\mathcal{O}^{\dots,\alpha'_{-1},\alpha'_{0},\alpha'_1,\dots}_{\dots,\alpha_{-1},\alpha_{0},\alpha_1,\dots}= \cdots O^{\alpha'_{-1}\alpha_{-1}} \cdot O^{\alpha'_{0}\alpha_{0}}\cdot O^{\alpha'_{1}\alpha_{1}}\cdot O^{\alpha'_{2}\alpha_{2}}\cdots,$$ or using more compact notation,
+$$\mathcal{O}^{\seq{\alpha'_i}}_{\seq{\alpha}_i} = \prod_{i\in\Z} O^{\alpha'_i\alpha_i}.$$
+
+Matrix product operators are very powerful because the encode a large class of operators that includes non-local operators (i.e., operators for which the number of terms in the operator is not proportional to the size of the system), and because it is straightforward to compute their expectations.  In particular, suppose we have some matrix product state with $A$ as the site tensor and some matrix product operator with $O$ as the site tensor.  The expectation matrix is then given by $$(E^A(O))_{(ii'i'')(jj'j'')} := \sum_{\alpha',\alpha} A^{\alpha'*}_{ij}O^{\alpha'\alpha}_{i'j'}A^{\alpha}_{i''j''}.$$  To compute the expectation, it remains to compute the limiting behavior of $E^A(O)^\infty$.  We do this by taking advantage of the fact that all of the eigenspaces will decay exponentially relative to the eigenspace associated with the largest eigenvalue, so all that we need to do is to compute the generalized eigenvectors for the largest eigenvalue.  Note that these vectors will \emph{not} in general be eigenvectors, but rather they form Jordan blocks;  this is actually a feature rather than a problem because if this were not the case then it would not be possible for $E^A(O)^n$ to be a \emph{linear} function of $n$, but we know that some expectation matrices must have this behavior because the expected value of many quantities is extensive and thus proportional to the system size.  For a more detailed discussion of this, see [].
+
+Unlike the case of local operators, the tensors $E^I$ do not form an environment that we can use to compute their expectation.  Instead, we need to maintain an \emph{operator} environment, in addition to the \emph{normalization} environment.  Also, unlike the normalization environment we cannot use tricks to be able to replace them with the (flattened) identity.
+
+\section{The Algorithm}
+
+We now have all of the ingredients necessary for th e1D algorithm.  Conceptually we start with an environment for the operator and an environment for the normalization, but because we assume that our system is in canonical form we can drop the normalization environment (as the norm will always be 1) and so we only need to carry around the operator environment.
+
+The basic idea behind the algorithm is that we start from a trivial representation of the system --- that is where all bond dimensions are set to 1 --- and then grow the bond dimensions until we seem to have converged to a solution.  Thus, we have two levels of iterations:  the higher-level iterates over increasing bond dimensions until they seem to have converged, and the lower level ``sweeps'' by alternating between improving the center site (using an eigensolver) and absorbing it into the left or right environment.  In pseudo-code, it looks like
+\begin{codebox}
+\Procname{$\proc{Compute-Ground-State}(O,L^O,R^O,b,t_1,t_2)$}
+\li $A \gets$ random tensor with shape $\const{physical-dimension}\times1\times 1$
+\li $L \gets L^O$ reshaped to $1\times1\times\text{dim}(L^O)$
+\li $R \gets R^O$ reshaped to $1\times1\times\text{dim}(R^O)$
+\li $\proc{Sweep-Until-Converged}(A,L,R,O,t_2)$
+\li $\id{old\_energy} \gets 0$
+\li $\id{new\_energy} \gets  \proc{Compute-Energy(A,L,R,O)}$
+\li \While $|old\_energy-new\_energy| > t_1$
+\li     \Do
+\li         $\id{old\_energy} \gets \id{new\_energy}$
+\li         $\proc{Increase-Bandwidth}(b,A,L,R)$
+\li         $\proc{Sweep-Until-Converged}(A,L,R,t_2,t_3)$
+\End
+\li return $A,L,R$
+\end{codebox}
+where $O$ is the matrix product operator site tensor, $L^O$ and $R^O$ are respectively the left and right boundaries for the operator, $b$ is a function that computes how much to raise the bandwidth dimension by, and $t_1$ and $t_2$ are the thresholds used to gauge whether we have converged respectively after increasing the bandwidth dimension and after making a left-right ``sweep''.  This procedure depends on \proc{Sweep-Until-Converged} to performs sweeps, which is given as follows:
+\begin{codebox}
+\Procname{$\proc{Sweep-Until-Converged}(A,L,R,O,t)$}
+\li $\id{old\_energy} \gets 0$
+\li $\proc{Perform-Sweep}(A,L,R,O)$
+\li \While $|old\_energy-new\_energy| > t$
+\li     \Do
+\li         $\id{old\_energy} \gets \id{new\_energy}$
+\li         $\proc{Perform-Sweep}(A,L,R,O)$
+\li         $\id{new\_energy} \gets  \proc{Compute-Energy(A,L,R,O)}$
+\end{codebox}
+where $A$ is the state site tensor, $O$ is the operator site tensor, $L$ and $R$ respectively the left and right operator environments, and $t$ is the threshold that determines when the sweeping has converged.  This procedure depends on \proc{Perform-Sweep}, which is defined as follows:
+\begin{codebox}
+\Procname{$\proc{Perform-Sweep}(A,L,R,O)$}
+\li $\proc{Improve-Site}(A,L,R,O)$
+\li $\proc{Absorb-Left}(A,L,R,O)$
+\li $\proc{Improve-Site}(A,L,R,O)$
+\li $\proc{Absorb-Right}(A,L,R,O)$
+\end{codebox}
 
 \part{2D Simulation Algorithm}
 \label{2dsim}
