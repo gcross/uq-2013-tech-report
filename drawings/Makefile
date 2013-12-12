@@ -1,0 +1,36 @@
+%.pdf: %.svg
+	inkscape -f $< -A $@ --export-text-to-path --export-area-page
+
+drawings: \
+contractExpectationBoundaries-car.pdf \
+contractExpectationBoundaries-nut.pdf \
+contractSOSLeft-car.pdf \
+contractSOSLeft-nut.pdf \
+contractSOSRight-car.pdf \
+contractSOSRight-nut.pdf \
+contractVSLeft-car.pdf \
+contractVSLeft-nut.pdf \
+contractVSRight-car.pdf \
+contractVSRight-nut.pdf \
+contract_sos_left-car.pdf \
+contract_sos_left-nut.pdf \
+contract_vs_left-car.pdf \
+contract_vs_left-nut.pdf \
+expectation-car.pdf \
+expectation-nut.pdf \
+expectation_boundary_tensors-car.pdf \
+expectation_boundary_tensors-nut.pdf \
+extendStateVectorFragment-car.pdf \
+extendStateVectorFragment-nut.pdf \
+operator_site_tensor-car.pdf \
+operator_site_tensor-nut.pdf \
+overlap-car.pdf \
+overlap-nut.pdf \
+overlap_boundary_tensors-car.pdf \
+overlap_boundary_tensors-nut.pdf \
+overlap_site_tensor-car.pdf \
+overlap_site_tensor-nut.pdf \
+state_site_tensor-car.pdf \
+state_site_tensor-nut.pdf \
+state_vector_fragment_tensor-car.pdf \
+state_vector_fragment_tensor-nut.pdf \
