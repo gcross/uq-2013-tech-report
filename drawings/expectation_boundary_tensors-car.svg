@@ -13,9 +13,9 @@
    height="300"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.4 r9939"
    version="1.0"
-   sodipodi:docname="expectation_boundaries.svg"
+   sodipodi:docname="expectation_boundary_tensors-car.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4">
@@ -42,7 +42,10 @@
      showgrid="true"
      units="in"
      showguides="true"
-     inkscape:guide-bbox="true">
+     inkscape:guide-bbox="true"
+     inkscape:zoom="2.2250293"
+     inkscape:cx="140"
+     inkscape:cy="150">
     <inkscape:grid
        type="xygrid"
        id="grid2383"
@@ -63,7 +66,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -122,7 +125,7 @@
            sodipodi:role="line"
            id="tspan3716"
            x="64.897469"
-           y="314.37402">2</tspan></text>
+           y="314.37402">1</tspan></text>
       <text
          sodipodi:linespacing="125%"
          id="text3718"
@@ -133,7 +136,7 @@
            y="114.45312"
            x="65.16407"
            id="tspan3720"
-           sodipodi:role="line">1</tspan></text>
+           sodipodi:role="line">2</tspan></text>
       <path
          sodipodi:nodetypes="ccccscccczccccsccccc"
          inkscape:connector-curvature="0"

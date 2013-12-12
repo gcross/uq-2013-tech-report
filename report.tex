@@ -8,6 +8,10 @@
 
 \usepackage{comment}
 
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+
 \newcommand{\paren}[1]{\left(#1\right)}
 \newcommand{\biggparen}[1]{\bigg(#1\bigg)}
 
@@ -22,6 +26,8 @@
 \newcommand{\expect}[1]{\left<#1\right>}
 
 \newcommand{\Z}{\mathbb{Z}}
+
+\newcommand{\diagramwidth}{4in}
 
 \begin{document}
 
@@ -98,6 +104,51 @@ Unlike the case of local operators, the tensors $E^I$ do not form an environment
 
 We now have all of the ingredients necessary for the 1D algorithm, but for concreteness we first need to pin down the order of the dimensions of the tensors involved and to describe the various contractions that will be performed with them.
 
+The site tensors $S$ and $O$ are respectively rank-3 and rank-4, and the dimensions are ordered such that the bandwidth dimensions are first and the physical dimensions are second; put another way, the left-facing dimension is 0 and the right-facing dimension is 1\footnote{This choice was made because it consistent with the 2D scheme and this ordering has problem easy to work with.  It is not the most efficient, however;  for that see Appendix []}.  These two tensors are illustrated in Figure \ref{fig:site-tensors-car}.
+
+\begin{figure}
+\centering
+\begin{subfigure}{2in}
+\includegraphics[width=2in]{drawings/state_site_tensor-car}
+\end{subfigure}
+\begin{subfigure}{2in}
+\includegraphics[width=2in]{drawings/operator_site_tensor-car}
+\end{subfigure}
+\caption{\label{fig:site-tensors-car} Illustrations of the state and operator site tensors.}
+\end{figure}
+
+The rank-3 environment tensors $L$ and $R$ have their first dimension connect to $O$, their second dimension connect to $S$ and their third dimension connect to $S^* $, as illustrated in Figure \ref{fig:environment-tensors-car}.
+
+\begin{figure}\begin{center}
+\includegraphics[width=\diagramwidth]{drawings/expectation_boundary_tensors-car}
+\caption{\label{fig:environment-tensors-car} Illustration of the environment tensors.}
+\end{center}\end{figure}
+
+Figure \ref{fig:expectation-car} shows how these tensors are all connected by illustrating the tensor network whose contraction obtains the energy of the system.
+\begin{figure}\begin{center}
+\includegraphics[width=\diagramwidth]{drawings/expectation-car}
+\caption{\label{fig:expectation-car} This diagram illustrates the tensor network contraction that obtains the expected value of the observable.  $L$ and $R$ are the environment tensors and $O$ and $S$ are the respective operator and state tensors; $S^*$ denotes the conjugate of $S$.  Note the existence of the following two conventions:  first that the left bandwidth index comes before the right bandwidth index which comes before the physical dimension or dimensions, and that the operator index comes before the state index which comes before the conjugate state index.}
+\end{center}\end{figure}
+
+Figures \ref{fig:contractSOSLeft-car} and \ref{fig:contractSOSRight-car} illustrate how to respectively absorb the center site into the left and right environments.
+
+\begin{figure}\begin{center}
+\includegraphics[width=\diagramwidth]{drawings/contractSOSLeft-car}
+\caption{\label{fig:contractSOSLeft-car} This diagram illustrates the contraction used to absorb a site into the left environment.}
+\end{center}\end{figure}
+
+\begin{figure}\begin{center}
+\includegraphics[width=\diagramwidth]{drawings/contractSOSRight-car}
+\caption{\label{fig:contractSOSRight-car}This diagram illustrates the contraction used to absorb a site into the right environment.}
+\end{center}\end{figure}
+
+Finally, Figure \ref{fig:matmul-car} illustrates a tensor network that effectively turns the environment into a matrix;  this is important because it lets us use an eigenvalue solver to find the state site tensor $S$ that minimizes the energy (holding the rest of the system constant).  The matrix itself is primarily only conceptual because it is more efficient to insert the site tensor into the network and then contract to find the result then it is contract the network with both holes into a matrix.
+
+\begin{figure}\begin{center}
+\includegraphics[width=\diagramwidth]{drawings/matmul-car}
+\caption{\label{fig:matmul-car}This diagram illustrates how to convert the environment into a matrix.  The bottom hole is where $S$ would normally be and the top hole is where $S^*$ would normally be.  You can use this network for matrix multiplication by inserting $S$ into the bottom hole and then contracting to obtain the result in the top hole.}
+\end{center}\end{figure}
+
 \section{The Algorithm}
 
 Conceptually we start with an environment for the operator and an environment for the normalization, but because we assume that our system is in canonical form we can drop the normalization environment (as the norm will always be 1) and so we only need to carry around the operator environment.
@@ -106,8 +157,8 @@ The basic idea behind the algorithm is that we start from a trivial representati
 \begin{codebox}
 \Procname{$\proc{Compute-Ground-State}(O,L^O,R^O,b,t_1,t_2)$}
 \li $S \gets$ random tensor with shape $\const{physical-dimension}\times1\times 1$
-\li $L \gets L^O$ reshaped to $1\times1\times\text{dim}(L^O)$
-\li $R \gets R^O$ reshaped to $1\times1\times\text{dim}(R^O)$
+\li $L \gets L^O$ reshaped to $\text{dim}(L^O)\times1\times1$
+\li $R \gets R^O$ reshaped to $\text{dim}(R^O)\times1\times1$
 \li $\proc{Sweep-Until-Converged}(S,L,R,O,t_2)$
 \li $\id{old\_energy} \gets 0$
 \li $\id{new\_energy} \gets  \proc{Compute-Energy(S,L,R,O)}$
@@ -138,7 +189,14 @@ where $S$ is the state site tensor, $O$ is the operator site tensor, $L$ and $R$
 \li $\proc{Improve-Site}(S,L,R,O)$
 \li $\proc{Absorb-Right}(S,L,R,O)$
 \end{codebox}
-The \proc{Absorb-Left} and \proc{Absorb-Right} functions contract the triple $S*$, $O$, and $S$ to form respectively a new left and right environment, and \proc{Improve-Site} functions works (conceptually) by contracting $L$, $R$, and $O$ to form a matrix and then and using an eigensolver to find the minimum eigenvalue and corresponding eigenvector, starting with $S$ as a guess.
+The \proc{Absorb-Left} and \proc{Absorb-Right} functions are implementations of the tensor contractions illustrated in respectively Figures \ref{fig:contractSOSLeft-car} and \ref{fig:contractSOSRight-car}.  \proc{Improve-Site} works as follows
+\begin{codebox}
+\Procname{$\proc{Improve-Site}(S,L,R,O)$}
+\li Define the function \id{matmul} to be the matrix multiplication operation illustrated in Figure \ref{fig:matmul-car}.
+\li Invoke ARPACK requesting the minimum eignevalue an associated eigenvector,
+\zi with \id{matmul} for the matrix multiplication function and $S$ for the initial guess.
+\li $S \gets$ the new minimal eigenvector
+\end{codebox}
 
 \part{2D Simulation Algorithm}
 \label{2dsim}

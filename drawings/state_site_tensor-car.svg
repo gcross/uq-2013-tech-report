@@ -13,9 +13,9 @@
    height="200"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.4 r9939"
    version="1.0"
-   sodipodi:docname="state_site_tensor.svg"
+   sodipodi:docname="state_site_tensor-car.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4">
@@ -44,7 +44,10 @@
      showguides="true"
      inkscape:guide-bbox="true"
      showborder="true"
-     borderlayer="false">
+     borderlayer="false"
+     inkscape:zoom="1.1125"
+     inkscape:cx="160"
+     inkscape:cy="100">
     <inkscape:grid
        type="xygrid"
        id="grid2383"
@@ -116,7 +119,7 @@
          y="342.38232"
          x="-6.2128744"
          id="tspan4035"
-         sodipodi:role="line">1</tspan></text>
+         sodipodi:role="line">0</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:24px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
@@ -127,7 +130,7 @@
          sodipodi:role="line"
          x="93.746094"
          y="342.37061"
-         id="tspan4039">2</tspan></text>
+         id="tspan4039">1</tspan></text>
     <text
        sodipodi:linespacing="125%"
        id="text4041"
@@ -138,7 +141,7 @@
          y="292.54053"
          x="44.021484"
          id="tspan4043"
-         sodipodi:role="line">0</tspan></text>
+         sodipodi:role="line">2</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 3.6933596,313.63427 c 6,-10 10.0000004,-14 20.0000004,-20 l 0,-20 c 0,0 0,-10 20,-10 20,0 20,10 20,10 l 0,20 c 10,6 16,12 20,20 l 20,0 c 0,0 10,0 10,20 0,20 -10,20 -10,20 l -20,0 c 0,0 -10,24 -40,24 -30,0 -40.0000004,-24 -40.0000004,-24 l -19.9999996,0 c 0,0 -10,0 -10,-20 0,-20 10,-20 10,-20 z"
