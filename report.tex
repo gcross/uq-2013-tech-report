@@ -50,23 +50,23 @@ In the following sections we fill in the details on this.  First we discuss the 
 
 \section{Basics}
 
-We assume that we are working with a system whose ground state can be well-approximated by an infinitely long (in both directions) chain of site tensors $A$, as illustrated in [].  Informally, the mathematical representation of this wave function is given by
+We assume that we are working with a system whose ground state can be well-approximated by an infinitely long (in both directions) chain of site tensors $S$, as illustrated in [].  Informally, the mathematical representation of this wave function is given by
 \begin{equation}
 \label{bi-inf-1d-state-a}
-\psi(\dots,\alpha_{-1},\alpha_{0},\alpha_1,\dots)= \cdots A^{\alpha_{-1}} \cdot A^{\alpha_0}\cdot A^{\alpha_1}\cdot A^{\alpha_2} \cdots,
+\psi(\dots,\alpha_{-1},\alpha_{0},\alpha_1,\dots)= \cdots S^{\alpha_{-1}} \cdot S^{\alpha_0}\cdot S^{\alpha_1}\cdot S^{\alpha_2} \cdots,
 \end{equation}
-where the left-hand side is the wave function evaluated at a given value for each of the (infinitely many) observables, and the right-hand side is the infinite product of matrices, $\prod_{i=-\infty}^{+\infty} A^{\alpha_i},$ where $A^{\alpha}$ is the matrix obtained by taking the rank-3 tensor $A$ and slicing it for a given value of the physical dimension, i.e. $(A^\alpha)_{ij}\equiv A^\alpha_{ij}$.
+where the left-hand side is the wave function evaluated at a given value for each of the (infinitely many) observables, and the right-hand side is the infinite product of matrices, $\prod_{i=-\infty}^{+\infty} S^{\alpha_i},$ where $S^{\alpha}$ is the matrix obtained by taking the rank-3 tensor $S$ and slicing it for a given value of the physical dimension, i.e. $(S^\alpha)_{ij}\equiv S^\alpha_{ij}$.
 
 For the sake of brevity, we rewrite \eqref{bi-inf-1d-state-a} as
 \begin{equation}
 \label{bi-inf-1d-state-b}
-\psi(\seq{\alpha_i}) = \prod_{i\in\Z} A^{\alpha_i},
+\psi(\seq{\alpha_i}) = \prod_{i\in\Z} S^{\alpha_i},
 \end{equation}
 where $\Z$ is the set of integers and $\seq{\alpha_i}$ is some bi-infinite sequence of spins (i.e. elements from $\{\uparrow,\downarrow\}$ or $\{0,1\}$, depending on which representation is more convenient).
 
-In general the right-hand-side of \eqref{bi-inf-1d-state-b} will not converge, though it will for special values of $A$ and $\seq{\alpha_i}$.  For example, if $A^\alpha_{ij}=M_{ij}$ where $M$ is an idempotent matrix, then $\psi(\seq{\alpha_i})=\prod_{i\in\Z} A^{\alpha_i} = \prod_{i\in\Z} M = M$.  Unfortunately, this result takes the form of a matrix when what we would really like is a complex number representing the amplitude of the wave in this configuration.  To get a complex number, we need to apply boundary conditions.  We have a couple of choices.  First, we can apply periodic boundary conditions, which gives us $\psi(\{\alpha_i\}_{i\in\Z})=\tr M$.  Second---the approach that we use in this paper---we can apply open boundary conditions $L$ and $R$ so that $\psi(\seq{\alpha_i})=L\cdot M\cdot R$  In this case, our result strongly depends on our choice of $L$ and $R$; as we will see in the following section, the (flattened) identity matrix is a good choice for both boundaries.
+In general the right-hand-side of \eqref{bi-inf-1d-state-b} will not converge, though it will for special values of $S$ and $\seq{\alpha_i}$.  For example, if $S^\alpha_{ij}=M_{ij}$ where $M$ is an idempotent matrix, then $\psi(\seq{\alpha_i})=\prod_{i\in\Z} S^{\alpha_i} = \prod_{i\in\Z} M = M$.  Unfortunately, this result takes the form of a matrix when what we would really like is a complex number representing the amplitude of the wave in this configuration.  To get a complex number, we need to apply boundary conditions.  We have a couple of choices.  First, we can apply periodic boundary conditions, which gives us $\psi(\{\alpha_i\}_{i\in\Z})=\tr M$.  Second---the approach that we use in this paper---we can apply open boundary conditions $L$ and $R$ so that $\psi(\seq{\alpha_i})=L\cdot M\cdot R$  In this case, our result strongly depends on our choice of $L$ and $R$; as we will see in the following section, the (flattened) identity matrix is a good choice for both boundaries.
 
-The preceding discussion shows that it is possible for there to be enough structure in the system that the product converges, but its requirement that $A^\alpha$ be completely independent of $\alpha$ is completely unrealistic;  without this structure, though, we would need to arrange that every choice of $\seq{\alpha_i}$ results in a converging product, which is non-trivial.
+The preceding discussion shows that it is possible for there to be enough structure in the system that the product converges, but its requirement that $S^\alpha$ be completely independent of $\alpha$ is completely unrealistic;  without this structure, though, we would need to arrange that every choice of $\seq{\alpha_i}$ results in a converging product, which is non-trivial.
 
 \begin{comment}
 Fortunately, in practice we don't actually need or even want the full wave function, only its expectation value with respect to various operators.  For example, assume that we are working with qubits\footnote{All of the results presented generalize for arbitrary qudits, but we choose to work with qubits specifically for concreteness and to keep things simple.} and let $Z$ be the Pauli Z spin matrix;  then the expectation with respect to $Z$ at site 0 is equal to
@@ -76,64 +76,69 @@ which traces over all the observables except the one at site zero to form the ma
 
 \section{Local Expectations and Canonicalization}
 
-Suppose we have a matrix product state defined by some single site tensor $A$, and we want to compute the expectation value of some single-site operator $O$.  We decompose the system into a saite and its left and right environments as follows.  First, we define the \emph{expectation} tensor to be $E^A(O_{(ii')(jj')}):=\sum_{\alpha,\alpha'\in\{\uparrow,\downarrow\}}A^{\alpha'*}_{ij}\cdot O_{\alpha',\alpha}\cdot A^\alpha_{i'j'}.$  With this notation we have that $\expect{O}=L\cdot (E^A(I))^\infty\cdot E(O)\cdot(E^A(I))^\infty\cdot R$, where $L$ and $R$ are the boundary vectors, needed for the overall expression to be a scalar.  Obviously this does not get us anywhere unless it is possible to compute $(E^A(I))^\infty$, so suppose now that $E^I$ has a maximum eigenvalue of 1 and that $L$ and $R$ are respectively associated left and right eigenvectors.  In this case, the result is easy:  we have that $\expect{O}=L\cdot E^O\cdot R$, which is manifestly finite and well-defined.  In fact, $L$ and $R$ act as the left and right environments of the center site because they contain all of the information of the system left and right of the center site that is needed to compute the expectation value.  Furthermore, this works for multi-site operators, i.e. $\expect{O_1\otimes O_2\cdots\otimes O_n} = L\cdot E^A(O_1)\cdot E^A(O_2)\cdots E^A(O_n)\cdot R$.
+Suppose we have a matrix product state defined by some single site tensor $S$, and we want to compute the expectation value of some single-site operator $O$.  We decompose the system into a saite and its left and right environments as follows.  First, we define the \emph{expectation} tensor to be $E^S(O_{(ii')(jj')}):=\sum_{\alpha,\alpha'\in\{\uparrow,\downarrow\}}S^{\alpha'*}_{ij}\cdot O_{\alpha',\alpha}\cdot S^\alpha_{i'j'}.$  With this notation we have that $\expect{O}=L\cdot (E^S(I))^\infty\cdot E(O)\cdot(E^S(I))^\infty\cdot R$, where $L$ and $R$ are the boundary vectors, needed for the overall expression to be a scalar.  Obviously this does not get us anywhere unless it is possible to compute $(E^S(I))^\infty$, so suppose now that $E^I$ has a maximum eigenvalue of 1 and that $L$ and $R$ are respectively associated left and right eigenvectors.  In this case, the result is easy:  we have that $\expect{O}=L\cdot E^O\cdot R$, which is manifestly finite and well-defined.  In fact, $L$ and $R$ act as the left and right environments of the center site because they contain all of the information of the system left and right of the center site that is needed to compute the expectation value.  Furthermore, this works for multi-site operators, i.e. $\expect{O_1\otimes O_2\cdots\otimes O_n} = L\cdot E^S(O_1)\cdot E^S(O_2)\cdots E^S(O_n)\cdot R$.
 
-Of course, this preceding discussion assumes that $E^A(I)$ is very well behaved, which will not be true in general.  Fortunately, we can \emph{make} it be well behaved.  To do this, we break transitional symmetry in the representation (though not in the state itself) and assume that there are tensors $A_L$, $A_M$ and $A_C$ such that \begin{equation}
+Of course, this preceding discussion assumes that $E^S(I)$ is very well behaved, which will not be true in general.  Fortunately, we can \emph{make} it be well behaved.  To do this, we break transitional symmetry in the representation (though not in the state itself) and assume that there are tensors $A_L$, $A_M$ and $A_C$ such that \begin{equation}
 \label{eq:newform}
 \psi(\seq{\alpha_i}) = \paren{\prod_{i\in\Z^-}(A_L)^{\alpha_i}}\cdot (A_M)^{\alpha_0}\cdot \paren{\prod_{i\in\Z^+}(A_R)^{\alpha_i}},\end{equation}
 and furthermore $A_L$ is in left-canonical form and $A_R$ is in right-canonical form, which means that $E^{A_L}(I)$ and $E^{A_R}(I)$ both have a maximum eigenvalue of 1 and furthermore $A_L$ satisfies $\sum_{\alpha,i}(A_L^*)^{\alpha}_{ij}(A_L)^{\alpha}_{ij'}=\delta_{jj'}$ and $A_R$ satisfies $\sum_{\alpha,j}(A_R^*)^{\alpha}_{ij}(A_R)^{\alpha}_{i'j}=\delta_{ii'},$  which means that the (flattened) identity matrix is a left-eigenvector of $A_L$ and the right-eigenvector of $A_R$ that are both associated with eigenvalue 1.
 
-Rather than starting from a state that is not in canonical form and then canonicalizing it, we shall \emph{assume} that the state is in canonical form and then only apply operations to preserve this property.  The basic trick that we use is as follows.  First, assume that we have two adjacent copies of the middle site tensor, $A^M$.  Let $U\cdot S\cdot V$ be the singular value decomposition of $A^M$, and then define $A'^L:=U\cdot V$.  We now have that $A^L$ is in left-canonical form, but we need to modify $A^M$ so that the overall state has not changed.  We do this by noting that $A^M=A^L\cdot X$ where $X=V^\dagger\cdot S\cdot V$, so therefore if we let $A'^M:= X\cdot A^M$ then the new state with tensors $A'^L$ and $A'^M$ is equal to the old state with two copies of $A_M$.  We now let $L'_{jj'}:=\sum_{i,j',\alpha}L_{ii'}(A^*)^M_{ij} A^M_{i'j'}.$  Because $A'_L$ is in canonical form, we have that (flattened) $L$ is a left-eigenvector and so $L'=L$.
+Rather than starting from a state that is not in canonical form and then canonicalizing it, we shall \emph{assume} that the state is in canonical form and then only apply operations to preserve this property.  The basic trick that we use is as follows.  First, assume that we have two adjacent copies of the middle site tensor, $S^M$.  Let $U\cdot S\cdot V$ be the singular value decomposition of $S^M$, and then define $S'^L:=U\cdot V$.  We now have that $S^L$ is in left-canonical form, but we need to modify $S^M$ so that the overall state has not changed.  We do this by noting that $S^M=S^L\cdot X$ where $X=V^\dagger\cdot S\cdot V$, so therefore if we let $S'^M:= X\cdot S^M$ then the new state with tensors $S'^L$ and $S'^M$ is equal to the old state with two copies of $A_M$.  We now let $L'_{jj'}:=\sum_{i,j',\alpha}L_{ii'}(S^*)^M_{ij} S^M_{i'j'}.$  Because $S'_L$ is in canonical form, we have that (flattened) $L$ is a left-eigenvector and so $L'=L$.
 
 \section{Operators}
 
 Matrix product operators are a natural extensionion of matrix product states where each site tensor, $O^{\alpha'\alpha}_{ij}$ is a rank-4 tensor with two physical dimensions instead of one.  The expression of the operator is defined analogous to the wave function, namely,$$\mathcal{O}^{\dots,\alpha'_{-1},\alpha'_{0},\alpha'_1,\dots}_{\dots,\alpha_{-1},\alpha_{0},\alpha_1,\dots}= \cdots O^{\alpha'_{-1}\alpha_{-1}} \cdot O^{\alpha'_{0}\alpha_{0}}\cdot O^{\alpha'_{1}\alpha_{1}}\cdot O^{\alpha'_{2}\alpha_{2}}\cdots,$$ or using more compact notation,
 $$\mathcal{O}^{\seq{\alpha'_i}}_{\seq{\alpha}_i} = \prod_{i\in\Z} O^{\alpha'_i\alpha_i}.$$
 
-Matrix product operators are very powerful because the encode a large class of operators that includes non-local operators (i.e., operators for which the number of terms in the operator is not proportional to the size of the system), and because it is straightforward to compute their expectations.  In particular, suppose we have some matrix product state with $A$ as the site tensor and some matrix product operator with $O$ as the site tensor.  The expectation matrix is then given by $$(E^A(O))_{(ii'i'')(jj'j'')} := \sum_{\alpha',\alpha} A^{\alpha'*}_{ij}O^{\alpha'\alpha}_{i'j'}A^{\alpha}_{i''j''}.$$  To compute the expectation, it remains to compute the limiting behavior of $E^A(O)^\infty$.  We do this by taking advantage of the fact that all of the eigenspaces will decay exponentially relative to the eigenspace associated with the largest eigenvalue, so all that we need to do is to compute the generalized eigenvectors for the largest eigenvalue.  Note that these vectors will \emph{not} in general be eigenvectors, but rather they form Jordan blocks;  this is actually a feature rather than a problem because if this were not the case then it would not be possible for $E^A(O)^n$ to be a \emph{linear} function of $n$, but we know that some expectation matrices must have this behavior because the expected value of many quantities is extensive and thus proportional to the system size.  For a more detailed discussion of this, see [].
+Matrix product operators are very powerful because the encode a large class of operators that includes non-local operators (i.e., operators for which the number of terms in the operator is not proportional to the size of the system), and because it is straightforward to compute their expectations.  In particular, suppose we have some matrix product state with $S$ as the site tensor and some matrix product operator with $O$ as the site tensor.  The expectation matrix is then given by $$(E^S(O))_{(ii'i'')(jj'j'')} := \sum_{\alpha',\alpha} S^{\alpha'*}_{ij}O^{\alpha'\alpha}_{i'j'}S^{\alpha}_{i''j''}.$$  To compute the expectation, it remains to compute the limiting behavior of $E^S(O)^\infty$.  We do this by taking advantage of the fact that all of the eigenspaces will decay exponentially relative to the eigenspace associated with the largest eigenvalue, so all that we need to do is to compute the generalized eigenvectors for the largest eigenvalue.  Note that these vectors will \emph{not} in general be eigenvectors, but rather they form Jordan blocks;  this is actually a feature rather than a problem because if this were not the case then it would not be possible for $E^S(O)^n$ to be a \emph{linear} function of $n$, but we know that some expectation matrices must have this behavior because the expected value of many quantities is extensive and thus proportional to the system size.  For a more detailed discussion of this, see [].
 
 Unlike the case of local operators, the tensors $E^I$ do not form an environment that we can use to compute their expectation.  Instead, we need to maintain an \emph{operator} environment, in addition to the \emph{normalization} environment.  Also, unlike the normalization environment we cannot use tricks to be able to replace them with the (flattened) identity.
 
+\section{Tensor Network Contractions}
+
+We now have all of the ingredients necessary for the 1D algorithm, but for concreteness we first need to pin down the order of the dimensions of the tensors involved and to describe the various contractions that will be performed with them.
+
 \section{The Algorithm}
 
-We now have all of the ingredients necessary for th e1D algorithm.  Conceptually we start with an environment for the operator and an environment for the normalization, but because we assume that our system is in canonical form we can drop the normalization environment (as the norm will always be 1) and so we only need to carry around the operator environment.
+Conceptually we start with an environment for the operator and an environment for the normalization, but because we assume that our system is in canonical form we can drop the normalization environment (as the norm will always be 1) and so we only need to carry around the operator environment.
 
 The basic idea behind the algorithm is that we start from a trivial representation of the system --- that is where all bond dimensions are set to 1 --- and then grow the bond dimensions until we seem to have converged to a solution.  Thus, we have two levels of iterations:  the higher-level iterates over increasing bond dimensions until they seem to have converged, and the lower level ``sweeps'' by alternating between improving the center site (using an eigensolver) and absorbing it into the left or right environment.  In pseudo-code, it looks like
 \begin{codebox}
 \Procname{$\proc{Compute-Ground-State}(O,L^O,R^O,b,t_1,t_2)$}
-\li $A \gets$ random tensor with shape $\const{physical-dimension}\times1\times 1$
+\li $S \gets$ random tensor with shape $\const{physical-dimension}\times1\times 1$
 \li $L \gets L^O$ reshaped to $1\times1\times\text{dim}(L^O)$
 \li $R \gets R^O$ reshaped to $1\times1\times\text{dim}(R^O)$
-\li $\proc{Sweep-Until-Converged}(A,L,R,O,t_2)$
+\li $\proc{Sweep-Until-Converged}(S,L,R,O,t_2)$
 \li $\id{old\_energy} \gets 0$
-\li $\id{new\_energy} \gets  \proc{Compute-Energy(A,L,R,O)}$
+\li $\id{new\_energy} \gets  \proc{Compute-Energy(S,L,R,O)}$
 \li \While $|old\_energy-new\_energy| > t_1$
 \li     \Do
 \li         $\id{old\_energy} \gets \id{new\_energy}$
-\li         $\proc{Increase-Bandwidth}(b,A,L,R)$
-\li         $\proc{Sweep-Until-Converged}(A,L,R,t_2,t_3)$
+\li         $\proc{Increase-Bandwidth}(b,S,L,R)$
+\li         $\proc{Sweep-Until-Converged}(S,L,R,t_2,t_3)$
 \End
-\li return $A,L,R$
+\li return $S,L,R$
 \end{codebox}
 where $O$ is the matrix product operator site tensor, $L^O$ and $R^O$ are respectively the left and right boundaries for the operator, $b$ is a function that computes how much to raise the bandwidth dimension by, and $t_1$ and $t_2$ are the thresholds used to gauge whether we have converged respectively after increasing the bandwidth dimension and after making a left-right ``sweep''.  This procedure depends on \proc{Sweep-Until-Converged} to performs sweeps, which is given as follows:
 \begin{codebox}
-\Procname{$\proc{Sweep-Until-Converged}(A,L,R,O,t)$}
+\Procname{$\proc{Sweep-Until-Converged}(S,L,R,O,t)$}
 \li $\id{old\_energy} \gets 0$
-\li $\proc{Perform-Sweep}(A,L,R,O)$
+\li $\proc{Perform-Sweep}(S,L,R,O)$
 \li \While $|old\_energy-new\_energy| > t$
 \li     \Do
 \li         $\id{old\_energy} \gets \id{new\_energy}$
-\li         $\proc{Perform-Sweep}(A,L,R,O)$
-\li         $\id{new\_energy} \gets  \proc{Compute-Energy(A,L,R,O)}$
+\li         $\proc{Perform-Sweep}(S,L,R,O)$
+\li         $\id{new\_energy} \gets  \proc{Compute-Energy(S,L,R,O)}$
 \end{codebox}
-where $A$ is the state site tensor, $O$ is the operator site tensor, $L$ and $R$ respectively the left and right operator environments, and $t$ is the threshold that determines when the sweeping has converged.  This procedure depends on \proc{Perform-Sweep}, which is defined as follows:
+where $S$ is the state site tensor, $O$ is the operator site tensor, $L$ and $R$ respectively the left and right operator environments, and $t$ is the threshold that determines when the sweeping has converged.  This procedure depends on \proc{Perform-Sweep}, which is defined as follows:
 \begin{codebox}
-\Procname{$\proc{Perform-Sweep}(A,L,R,O)$}
-\li $\proc{Improve-Site}(A,L,R,O)$
-\li $\proc{Absorb-Left}(A,L,R,O)$
-\li $\proc{Improve-Site}(A,L,R,O)$
-\li $\proc{Absorb-Right}(A,L,R,O)$
+\Procname{$\proc{Perform-Sweep}(S,L,R,O)$}
+\li $\proc{Improve-Site}(S,L,R,O)$
+\li $\proc{Absorb-Left}(S,L,R,O)$
+\li $\proc{Improve-Site}(S,L,R,O)$
+\li $\proc{Absorb-Right}(S,L,R,O)$
 \end{codebox}
+The \proc{Absorb-Left} and \proc{Absorb-Right} functions contract the triple $S*$, $O$, and $S$ to form respectively a new left and right environment, and \proc{Improve-Site} functions works (conceptually) by contracting $L$, $R$, and $O$ to form a matrix and then and using an eigensolver to find the minimum eigenvalue and corresponding eigenvector, starting with $S$ as a guess.
 
 \part{2D Simulation Algorithm}
 \label{2dsim}
