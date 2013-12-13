@@ -91,10 +91,19 @@ Matrix product operators are very powerful because the encode a large class of o
 Unlike the case of local operators, the tensors $E^I$ do not form an environment that we can use to compute their expectation.  Instead, we need to maintain an \emph{operator} environment, in addition to the \emph{normalization} environment.  Also, unlike the normalization environment we cannot use tricks to be able to replace them with the (flattened) identity.
 
 \section{Tensor Network Contractions}
+\label{1d-contractions}
 
 We now have all of the ingredients necessary for the 1D algorithm, but for concreteness we first need to pin down the order of the dimensions of the tensors involved and to describe the various contractions that will be performed with them.
 
 The site tensors $S$ and $O$ are respectively rank-3 and rank-4, and the dimensions are ordered such that the bandwidth dimensions are first and the physical dimensions are second; put another way, the left-facing dimension is 0 and the right-facing dimension is 1\footnote{This choice was made because it consistent with the 2D scheme and this ordering has problem easy to work with.  It is not the most efficient, however;  for that see Appendix []}.  These two tensors are illustrated in Figure \ref{fig:site-tensors-car}.
+
+The rank-3 environment tensors $L$ and $R$ have their first dimension connect to $O$, their second dimension connect to $S$ and their third dimension connect to $S^* $, as illustrated in Figure \ref{fig:environment-tensors-car}.
+
+The environment tensors and site tensors connect to form a tensor network, illustrated in Figure \ref{fig:expectation-car}, which evaluates to the expectation value of the operator when contracted.
+
+When absorbing a site to the left or the right to ``improve'' the environments, one uses the tensor networks illustrated in respectively Figures \ref{fig:contractSOSLeft-car} and \ref{fig:contractSOSRight-car}.
+
+Finally, Figure \ref{fig:matmul-car} illustrates a tensor network that effectively turns the environment into a matrix;  this is important because it lets us use an eigenvalue solver to find the state site tensor $S$ that minimizes the energy (holding the rest of the system constant).  The matrix itself is primarily only conceptual because it is more efficient to insert the site tensor into the network and then contract to find the result then it is contract the network with both holes into a matrix.
 
 \begin{figure}
 \centering
@@ -107,20 +116,15 @@ The site tensors $S$ and $O$ are respectively rank-3 and rank-4, and the dimensi
 \caption{\label{fig:site-tensors-car} Illustrations of the state and operator site tensors.}
 \end{figure}
 
-The rank-3 environment tensors $L$ and $R$ have their first dimension connect to $O$, their second dimension connect to $S$ and their third dimension connect to $S^* $, as illustrated in Figure \ref{fig:environment-tensors-car}.
-
 \begin{figure}\begin{center}
 \includegraphics[width=\diagramwidth]{drawings/expectation_boundary_tensors-car}
 \caption{\label{fig:environment-tensors-car} Illustration of the environment tensors.}
 \end{center}\end{figure}
 
-Figure \ref{fig:expectation-car} shows how these tensors are all connected by illustrating the tensor network whose contraction obtains the energy of the system.
 \begin{figure}\begin{center}
 \includegraphics[width=\diagramwidth]{drawings/expectation-car}
 \caption{\label{fig:expectation-car} This diagram illustrates the tensor network contraction that obtains the expected value of the observable.  $L$ and $R$ are the environment tensors and $O$ and $S$ are the respective operator and state tensors; $S^*$ denotes the conjugate of $S$.  Note the existence of the following two conventions:  first that the left bandwidth index comes before the right bandwidth index which comes before the physical dimension or dimensions, and that the operator index comes before the state index which comes before the conjugate state index.}
 \end{center}\end{figure}
-
-Figures \ref{fig:contractSOSLeft-car} and \ref{fig:contractSOSRight-car} illustrate how to respectively absorb the center site into the left and right environments.
 
 \begin{figure}\begin{center}
 \includegraphics[width=\diagramwidth]{drawings/contractSOSLeft-car}
@@ -132,18 +136,20 @@ Figures \ref{fig:contractSOSLeft-car} and \ref{fig:contractSOSRight-car} illustr
 \caption{\label{fig:contractSOSRight-car}This diagram illustrates the contraction used to absorb a site into the right environment.}
 \end{center}\end{figure}
 
-Finally, Figure \ref{fig:matmul-car} illustrates a tensor network that effectively turns the environment into a matrix;  this is important because it lets us use an eigenvalue solver to find the state site tensor $S$ that minimizes the energy (holding the rest of the system constant).  The matrix itself is primarily only conceptual because it is more efficient to insert the site tensor into the network and then contract to find the result then it is contract the network with both holes into a matrix.
-
 \begin{figure}\begin{center}
 \includegraphics[width=\diagramwidth]{drawings/matmul-car}
 \caption{\label{fig:matmul-car}This diagram illustrates how to convert the environment into a matrix.  The bottom hole is where $S$ would normally be and the top hole is where $S^*$ would normally be.  You can use this network for matrix multiplication by inserting $S$ into the bottom hole and then contracting to obtain the result in the top hole.}
 \end{center}\end{figure}
 
+\clearpage
+
 \section{The Algorithm}
 
 Conceptually we start with an environment for the operator and an environment for the normalization, but because we assume that our system is in canonical form we can drop the normalization environment (as the norm will always be 1) and so we only need to carry around the operator environment.
 
-The basic idea behind the algorithm is that we start from a trivial representation of the system --- that is where all bond dimensions are set to 1 --- and then grow the bond dimensions until we seem to have converged to a solution.  Thus, we have two levels of iterations:  the higher-level iterates over increasing bond dimensions until they seem to have converged, and the lower level ``sweeps'' by alternating between improving the center site (using an eigensolver) and absorbing it into the left or right environment.  In pseudo-code, it looks like
+The basic idea behind the algorithm is that we start from a trivial representation of the system --- that is where all bond dimensions are set to 1 --- and then grow the bond dimensions until we seem to have converged to a solution.  Thus, we have two levels of iterations:  the higher-level iterates over increasing bond dimensions until they seem to have converged, and the lower level ``sweeps'' by alternating between improving the center site (using an eigensolver) and absorbing it into the left or right environment.  This algorithm is presented in pseudo-code form in Figure \ref{fig:Compute-Ground-State}.
+
+\begin{figure}
 \begin{codebox}
 \Procname{$\proc{Compute-Ground-State}(O,L^O,R^O,b,t_1,t_2)$}
 \li $S \gets$ random tensor with shape $\const{physical-dimension}\times1\times 1$
@@ -152,7 +158,7 @@ The basic idea behind the algorithm is that we start from a trivial representati
 \li $\proc{Sweep-Until-Converged}(S,L,R,O,t_2)$
 \li $\id{old\_energy} \gets 0$
 \li $\id{new\_energy} \gets  \proc{Compute-Energy(S,L,R,O)}$
-\li \While $|old\_energy-new\_energy| > t_1$
+\li \While $|old\_energy-new\_energy| \ge t_1$
 \li     \Do
 \li         $\id{old\_energy} \gets \id{new\_energy}$
 \li         $\proc{Increase-Bandwidth}(b,S,L,R)$
@@ -160,33 +166,48 @@ The basic idea behind the algorithm is that we start from a trivial representati
 \End
 \li return $S,L,R$
 \end{codebox}
-where $O$ is the matrix product operator site tensor, $L^O$ and $R^O$ are respectively the left and right boundaries for the operator, $b$ is a function that computes how much to raise the bandwidth dimension by, and $t_1$ and $t_2$ are the thresholds used to gauge whether we have converged respectively after increasing the bandwidth dimension and after making a left-right ``sweep''.  This procedure depends on \proc{Sweep-Until-Converged} to performs sweeps, which is given as follows:
+\caption{\label{fig:Compute-Ground-State} This function finds the minimal eigenstate for the given matrix product operator.  Here $O$ is the matrix product operator site tensor, $L^O$ and $R^O$ are respectively the left and right boundaries for the operator, $b$ is a function that computes how much to raise the bandwidth dimension by, and $t_1$ and $t_2$ are the thresholds used to gauge whether we have converged respectively after increasing the bandwidth dimension and after making a left-right ``sweep''.  This procedure works by repeatedly increasing the bandwidth and converging to the minimal state given that bandwidth until the difference in the eigenvalue between the old (less bandwidth) state and the new (greater bandwidth) state is below $t_1$, at which point victory is delcared. This procedure depends on \proc{Sweep-Until-Converged} to performs sweeps, which is listed in Figure \ref{fig:Sweep-Until-Converged}.}
+\end{figure}
+
+\begin{figure}
 \begin{codebox}
 \Procname{$\proc{Sweep-Until-Converged}(S,L,R,O,t)$}
 \li $\id{old\_energy} \gets 0$
 \li $\proc{Perform-Sweep}(S,L,R,O)$
-\li \While $|old\_energy-new\_energy| > t$
+\li \While $|old\_energy-new\_energy| \ge t$
 \li     \Do
 \li         $\id{old\_energy} \gets \id{new\_energy}$
 \li         $\proc{Perform-Sweep}(S,L,R,O)$
 \li         $\id{new\_energy} \gets  \proc{Compute-Energy(S,L,R,O)}$
 \end{codebox}
-where $S$ is the state site tensor, $O$ is the operator site tensor, $L$ and $R$ respectively the left and right operator environments, and $t$ is the threshold that determines when the sweeping has converged.  This procedure depends on \proc{Perform-Sweep}, which is defined as follows:
+\caption{\label{fig:Sweep-Until-Converged} This function performs sweeps until the state has converged. Here $S$ is the state site tensor, $O$ is the operator site tensor, $L$ and $R$ respectively the left and right operator environments, and $t$ is the threshold that determines when the sweeping has converged; i.e. the state will be declared to have been converged when, after a sweep, the difference between the old value and the new value is below $t$.  This procedure depends on \proc{Perform-Sweep}, which is listed in Figure \ref{fig:Perform-Sweep}}
+\end{figure}
+
+\begin{figure}
 \begin{codebox}
 \Procname{$\proc{Perform-Sweep}(S,L,R,O)$}
 \li $\proc{Improve-Site}(S,L,R,O)$
-\li $\proc{Absorb-Left}(S,L,R,O)$
+\li $\proc{Absorb}(0,L,S,O)$
 \li $\proc{Improve-Site}(S,L,R,O)$
-\li $\proc{Absorb-Right}(S,L,R,O)$
+\li $\proc{Absorb}(1,R,S,O)$
 \end{codebox}
-The \proc{Absorb-Left} and \proc{Absorb-Right} functions are implementations of the tensor contractions illustrated in respectively Figures \ref{fig:contractSOSLeft-car} and \ref{fig:contractSOSRight-car}.  \proc{Improve-Site} works as follows
+\caption{\label{fig:Perform-Sweep} This function performs two iterations that each consist of improving the site and then absorbing it between either the left or right.  Here $S$ is the state site tensor, $O$ is the operator site tensor, and $L$ and $R$ respectively the left and right operator environments.  \proc{Improve-Site} is }
+\end{figure}
+
+The \proc{Absorb-Left} and \proc{Absorb-Right} functions are implementations of the tensor contractions illustrated in respectively Figures \ref{fig:contractSOSLeft-car} and \ref{fig:contractSOSRight-car}.
+
+\begin{figure}
 \begin{codebox}
 \Procname{$\proc{Improve-Site}(S,L,R,O)$}
-\li Define the function \id{matmul} to be the matrix multiplication operation illustrated in Figure \ref{fig:matmul-car}.
-\li Invoke ARPACK requesting the minimum eignevalue an associated eigenvector,
-\zi with \id{matmul} for the matrix multiplication function and $S$ for the initial guess.
+\li Define the function \id{matmul} to be the matrix multiplication operation
+\zi illustrated in Figure \ref{fig:matmul-car}.
+\li Invoke ARPACK requesting the minimum eignevalue an associated,
+\zi eigenvector with \id{matmul} for the matrix multiplication function and
+\zi $S$ for the initial guess.
 \li $S \gets$ the new minimal eigenvector
 \end{codebox}
+\caption{This procedure finds the state site tensor that minimizes the expectation value of the tensor network illustrated in Figure \ref{fig:expectation-car}. Here $S$ is the state site tensor, $O$ is the operator site tensor, and $L$ and $R$ respectively the left and right operator environments.}
+\end{figure}
 
 \part{2D Simulation Algorithm}
 \label{2dsim}
