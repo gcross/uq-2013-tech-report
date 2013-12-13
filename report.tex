@@ -33,6 +33,8 @@
 
 \begin{document}
 
+\tableofcontents
+
 \part*{Introduction}
 
 In this report, we present our work on implementing a 2D simulation algorithm built upon the foundation of tensor network states, which have been proved to be very successful [] [] [].  In particular, we have been implementing a variant of [] that differs in two significant respects.  First, we use two links between each tensor instead of one in order to preserve the symmetry of the system with respect to flipping and then conjugating the system;  the hope is that this will lead to more accurate results.  Second, we use a construction that derived from and similar in spirit to tensor network operators, which allows us to handle a wide range of operators using a relatively simple input format.
@@ -214,10 +216,7 @@ The \proc{Absorb-Left} and \proc{Absorb-Right} functions are implementations of 
 \part{2D Simulation Algorithm}
 \label{2dsim}
 
-\part*{Bibliography}
-
-\bibliography{report.bib}
-\bibliographystyle{plain}
+\part{Appendix}
 
 \begin{appendices}
 \section{Optimal Contractions for 1D}
@@ -259,5 +258,10 @@ The tensor contractions in this appendix are ones that have been optimized for e
 \clearpage
 
 \end{appendices}
+
+\part{Bibliography}
+
+\bibliography{report.bib}
+\bibliographystyle{plain}
 
 \end{document}
