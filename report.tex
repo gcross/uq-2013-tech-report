@@ -12,6 +12,8 @@
 \usepackage{caption}
 \usepackage{subcaption}
 
+\usepackage{appendix}
+
 \newcommand{\paren}[1]{\left(#1\right)}
 \newcommand{\biggparen}[1]{\bigg(#1\bigg)}
 
@@ -216,5 +218,46 @@ The \proc{Absorb-Left} and \proc{Absorb-Right} functions are implementations of 
 
 \bibliography{report.bib}
 \bibliographystyle{plain}
+
+\begin{appendices}
+\section{Optimal Contractions for 1D}
+\label{apndx:optimal-contractions}
+
+The tensor contractions in this appendix are ones that have been optimized for efficiency by experimenting with different choices for the index and contraction ordering.  The optimized site tensors are in Figure \ref{fig:site-tensors-opt}, and the optimized environment tensors are in Figure \ref{fig:environment-tensors-opt}.  The expectation value tensor network is in Figure \ref{fig:expectation-opt}.  The optimized subroutines for absorbing the site the left and right environments are shown in respectively Figures \ref{fig:contract_sos_left-opt} and \ref{fig:contract_sos_right-opt}, and the optimized routine for performing matrix multiplication for ARPACK is illustrated in Figure \ref{fig:iteration-opt}.
+
+\begin{figure}
+\centering
+\begin{subfigure}{2in}
+\includegraphics[width=2in]{drawings/state_site_tensor-car}
+\end{subfigure}
+\begin{subfigure}{2in}
+\includegraphics[width=2in]{drawings/operator_site_tensor-car}
+\end{subfigure}
+\caption{\label{fig:site-tensors-opt} Illustrations of the state and operator site tensors.}
+\end{figure}
+
+\begin{figure}\begin{center}
+\includegraphics[width=\diagramwidth]{drawings/expectation_boundary_tensors-car}
+\caption{\label{fig:environment-tensors-opt} Illustration of the environment tensors.}
+\end{center}\end{figure}
+
+\begin{figure}\begin{center}
+\includegraphics[width=\diagramwidth]{drawings/contract_sos_left-opt}
+\caption{\label{fig:contract_sos_left-opt} This diagram illustrates the contraction used to absorb a site into the left environment.}
+\end{center}\end{figure}
+
+\begin{figure}\begin{center}
+\includegraphics[width=\diagramwidth]{drawings/contract_sos_right-opt}
+\caption{\label{fig:contract_sos_right-opt} This diagram illustrates the contraction used to absorb a site into the right environment.}
+\end{center}\end{figure}
+
+\begin{figure}\begin{center}
+\includegraphics[width=\diagramwidth]{drawings/iteration-opt}
+\caption{\label{fig:iteration-opt} This diagram illustrates the contraction used to perform the matrix multiplication used by the ARPACK eigensolver.}
+\end{center}\end{figure}
+
+\clearpage
+
+\end{appendices}
 
 \end{document}
