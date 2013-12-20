@@ -151,7 +151,7 @@ Finally, Figure \ref{fig:matmul-car} illustrates a tensor network that effective
 
 Conceptually we start with an environment for the operator and an environment for the normalization, but because we assume that our system is in canonical form we can drop the normalization environment (as the norm will always be 1) and so we only need to carry around the operator environment.
 
-The basic idea behind the algorithm is that we start from a trivial representation of the system --- that is where all bond dimensions are set to 1 --- and then grow the bond dimensions until we seem to have converged to a solution.  Thus, we have two levels of iterations:  the higher-level iterates over increasing bond dimensions until they seem to have converged, and the lower level ``sweeps'' by alternating between improving the center site (using an eigensolver) and absorbing it into the left or right environment.  This algorithm is presented in pseudo-code form in Figure \ref{fig:Compute-Ground-State}.
+The basic idea behind the algorithm is that we start from a trivial representation of the system --- that is where all bond dimensions are set to 1 --- and then grow the bond dimensions until we seem to have converged to a solution.  Thus, we have two levels of iterations:  the higher-level iterates over increasing bond dimensions until they seem to have converged, and the lower level ``sweeps'' by alternating between improving the center site (using an eigensolver) and absorbing it into the left or right environment.  This algorithm is presented in pseudo-code form in Figure \ref{code:Compute-Ground-State}.
 
 \begin{figure}
 \begin{codebox}
@@ -170,7 +170,7 @@ The basic idea behind the algorithm is that we start from a trivial representati
 \End
 \li return $S,L,R$
 \end{codebox}
-\caption{\label{fig:Compute-Ground-State} This function finds the minimal eigenstate for the given matrix product operator.  Here $O$ is the matrix product operator site tensor, $L^O$ and $R^O$ are respectively the left and right boundaries for the operator, $b$ is a function that computes how much to raise the bandwidth dimension by, and $t_1$ and $t_2$ are the thresholds used to gauge whether we have converged respectively after increasing the bandwidth dimension and after making a left-right ``sweep''.  This procedure works by repeatedly increasing the bandwidth and converging to the minimal state given that bandwidth until the difference in the eigenvalue between the old (less bandwidth) state and the new (greater bandwidth) state is below $t_1$, at which point victory is delcared. This procedure depends on \proc{Sweep-Until-Converged} to performs sweeps, which is listed in Figure \ref{fig:Sweep-Until-Converged}.}
+\caption{\label{code:Compute-Ground-State} This function finds the minimal eigenstate for the given matrix product operator.  Here $O$ is the matrix product operator site tensor, $L^O$ and $R^O$ are respectively the left and right boundaries for the operator, $b$ is a function that computes how much to raise the bandwidth dimension by, and $t_1$ and $t_2$ are the thresholds used to gauge whether we have converged respectively after increasing the bandwidth dimension and after making a left-right ``sweep''.  This procedure works by repeatedly increasing the bandwidth and converging to the minimal state given that bandwidth until the difference in the eigenvalue between the old (less bandwidth) state and the new (greater bandwidth) state is below $t_1$, at which point victory is delcared. This procedure depends on \proc{Sweep-Until-Converged} to performs sweeps, which is listed in Figure \ref{code:Sweep-Until-Converged}.}
 \end{figure}
 
 \begin{figure}
@@ -184,21 +184,19 @@ The basic idea behind the algorithm is that we start from a trivial representati
 \li         $\proc{Perform-Sweep}(S,L,R,O)$
 \li         $\id{new\_energy} \gets  \proc{Compute-Energy(S,L,R,O)}$
 \end{codebox}
-\caption{\label{fig:Sweep-Until-Converged} This function performs sweeps until the state has converged. Here $S$ is the state site tensor, $O$ is the operator site tensor, $L$ and $R$ respectively the left and right operator environments, and $t$ is the threshold that determines when the sweeping has converged; i.e. the state will be declared to have been converged when, after a sweep, the difference between the old value and the new value is below $t$.  This procedure depends on \proc{Perform-Sweep}, which is listed in Figure \ref{fig:Perform-Sweep}}
+\caption{\label{code:Sweep-Until-Converged} This function performs sweeps until the state has converged. Here $S$ is the state site tensor, $O$ is the operator site tensor, $L$ and $R$ respectively the left and right operator environments, and $t$ is the threshold that determines when the sweeping has converged; i.e. the state will be declared to have been converged when, after a sweep, the difference between the old value and the new value is below $t$.  This procedure depends on \proc{Perform-Sweep}, which is listed in Figure \ref{code:Perform-Sweep}}
 \end{figure}
 
 \begin{figure}
 \begin{codebox}
 \Procname{$\proc{Perform-Sweep}(S,L,R,O)$}
 \li $\proc{Improve-Site}(S,L,R,O)$
-\li $\proc{Absorb}(0,L,S,O)$
+\li $\proc{Absorb-Site-Left}(0,L,S,O)$
 \li $\proc{Improve-Site}(S,L,R,O)$
-\li $\proc{Absorb}(1,R,S,O)$
+\li $\proc{Absorb-Site-Right}(1,R,S,O)$
 \end{codebox}
-\caption{\label{fig:Perform-Sweep} This function performs two iterations that each consist of improving the site and then absorbing it between either the left or right.  Here $S$ is the state site tensor, $O$ is the operator site tensor, and $L$ and $R$ respectively the left and right operator environments.  \proc{Improve-Site} is }
+\caption{\label{code:Perform-Sweep} This function performs two iterations that each consist of improving the site and then absorbing it between either the left or right.  Here $S$ is the state site tensor, $O$ is the operator site tensor, and $L$ and $R$ respectively the left and right operator environments.  \proc{Improve-Site} is listed in Fig. \ref{code:Improve-Site}, \proc{Absorb-Site} is listed in Fig. \ref{code:Absorb-Site-Left}, and \proc{Absorb-Site} is listed in Fig. \ref{code:Absorb-Site-Right}.}
 \end{figure}
-
-The \proc{Absorb-Left} and \proc{Absorb-Right} functions are implementations of the tensor contractions illustrated in respectively Figures \ref{fig:contractSOSLeft-car} and \ref{fig:contractSOSRight-car}.
 
 \begin{figure}
 \begin{codebox}
@@ -210,8 +208,37 @@ The \proc{Absorb-Left} and \proc{Absorb-Right} functions are implementations of 
 \zi $S$ for the initial guess.
 \li $S \gets$ the new minimal eigenvector
 \end{codebox}
-\caption{This procedure finds the state site tensor that minimizes the expectation value of the tensor network illustrated in Figure \ref{fig:expectation-car}. Here $S$ is the state site tensor, $O$ is the operator site tensor, and $L$ and $R$ respectively the left and right operator environments.}
+\caption{\label{code:Improve-Site}This procedure finds the state site tensor that minimizes the expectation value of the tensor network illustrated in Figure \ref{fig:expectation-car}. Here $S$ is the state site tensor, $O$ is the operator site tensor, and $L$ and $R$ respectively the left and right operator environments.}
 \end{figure}
+
+\begin{figure}
+\begin{codebox}
+\Procname{$\proc{Absorb-Site-Left}(S,L,R,O)$}
+\li $b_L, b_R, d \gets $ shape of $S$
+\li $M \gets S$ reshaped to $(b_L\cdot b_R, d)$
+\li $U, S, V \gets \proc{SVD}(M)$
+\li $S' \gets U\cdot V$ reshaped to $(b_L,b_R, d)$
+\li $S \gets V^\dagger \cdot S \cdot V$ reshaped to $(b_L,b_R, d)$
+\li $L \gets $ the result ($L'$) of the contraction in Fig. \ref{fig:contractSOSLeft-car} with $S'$ in the place of $S$.
+\end{codebox}
+\caption{\label{code:Absorb-Site-Left} Normalizes and then absorbs the site tensor into the left environment.}
+\end{figure}
+
+\begin{figure}
+\begin{codebox}
+\Procname{$\proc{Absorb-Site-Right}(S,L,R,O)$}
+\li Transpose the first two indices of $S$.
+\li $b_R, b_L, d \gets $ shape of $S$
+\li $M \gets S$ reshaped to $(b_R,\cdot b_L, d)$
+\li $U, S, V \gets \proc{SVD}(M)$
+\li $S' \gets U\cdot V$ reshaped to $(b_R,b_L, d)$
+\li $S \gets V^\dagger \cdot S \cdot V$ reshaped to $(b_R,b_L, d)$
+\li Transpose the first two indices of $S$ and $'$.
+\li $R \gets $ the result ($R'$) of the contraction in Fig. \ref{fig:contractSOSRight-car} with $S'$ in the place of $S$.
+\end{codebox}
+\caption{\label{code:Absorb-Site-Right} Normalizes and then absorbs the site tensor into the right environment.}
+\end{figure}
+
 
 \part{2D Simulation Algorithm}
 \label{2dsim}
