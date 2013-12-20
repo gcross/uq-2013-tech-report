@@ -7,3 +7,4 @@
 *.swp
 *.synctex.gz
 .DS_Store
+*.toc
