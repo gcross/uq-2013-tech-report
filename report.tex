@@ -149,7 +149,9 @@ Finally, Figure \ref{fig:matmul-car} illustrates a tensor network that effective
 
 \section{The Algorithm}
 
-Conceptually we start with an environment for the operator and an environment for the normalization, but because we assume that our system is in canonical form we can drop the normalization environment (as the norm will always be 1) and so we only need to carry around the operator environment.
+\subsection{Optimization}
+
+In this section we describe the algorithm which attempts to find a food approximation to the ground state of the system in (infinite) matrix product state form.  Conceptually we start with an environment for the operator and an environment for the normalization, but because we assume that our system is in canonical form we can drop the normalization environment (as the norm will always be 1) and so we only need to carry around the operator environment.
 
 The basic idea behind the algorithm is that we start from a trivial representation of the system --- that is where all bond dimensions are set to 1 --- and then grow the bond dimensions until we seem to have converged to a solution.  Thus, we have two levels of iterations:  the higher-level iterates over increasing bond dimensions until they seem to have converged, and the lower level ``sweeps'' by alternating between improving the center site (using an eigensolver) and absorbing it into the left or right environment.  This algorithm is presented in pseudo-code form in Figure \ref{code:Compute-Ground-State}.
 
@@ -239,6 +241,11 @@ The basic idea behind the algorithm is that we start from a trivial representati
 \caption{\label{code:Absorb-Site-Right} Normalizes and then absorbs the site tensor into the right environment.}
 \end{figure}
 
+\subsection{Expectations}
+
+\subsubsection{Local Operator}
+
+\subsubsection{Matrix Product Operator}
 
 \part{2D Simulation Algorithm}
 \label{2dsim}
