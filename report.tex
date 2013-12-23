@@ -76,7 +76,19 @@ The preceding discussion shows that it is possible for there to be enough struct
 
 \subsection{Local Expectations and Canonicalization}
 
-Suppose we have a matrix product state defined by some single site tensor $S$, and we want to compute the expectation value of some single-site operator $O$.  We decompose the system into a site and its left and right environments as follows.  First, we define the \emph{expectation} tensor to be $E^S(O_{(ii')(jj')}):=\sum_{\alpha,\alpha'\in\{\uparrow,\downarrow\}}S^{\alpha'*}_{ij}\cdot O_{\alpha',\alpha}\cdot S^\alpha_{i'j'}.$  With this notation we have that $\expect{O}=L\cdot (E^S(I))^\infty\cdot E(O)\cdot(E^S(I))^\infty\cdot R$, where $L$ and $R$ are the boundary vectors, needed for the overall expression to be a scalar.  Obviously this does not get us anywhere unless it is possible to compute $(E^S(I))^\infty$, so suppose now that $E^I$ has a maximum eigenvalue of 1 and that $L$ and $R$ are respectively associated left and right eigenvectors.  In this case, the result is easy:  we have that $\expect{O}=L\cdot E^O\cdot R$, which is manifestly finite and well-defined.  In fact, $L$ and $R$ act as the left and right environments of the center site because they contain all of the information of the system left and right of the center site that is needed to compute the expectation value.  Furthermore, this works for multi-site operators, i.e. $\expect{O_1\otimes O_2\cdots\otimes O_n} = L\cdot E^S(O_1)\cdot E^S(O_2)\cdots E^S(O_n)\cdot R$.
+Suppose we have a matrix product state defined by some single site tensor $S$, and we want to compute the expectation value of some single-site operator $O$.  We decompose the system into a site and its left and right environments as follows.  First, we define the \emph{expectation} tensor to be $E^S(O_{(ii')(jj')}):=\sum_{\alpha,\alpha'\in\{\uparrow,\downarrow\}}S^{\alpha'*}_{ij}\cdot O_{\alpha',\alpha}\cdot S^\alpha_{i'j'},$ which is illustrated in Fig. .  With this notation we have that $\expect{O}=L\cdot (E^S(I))^\infty\cdot E(O)\cdot(E^S(I))^\infty\cdot R$, where $L$ and $R$ are the boundary vectors, needed for the overall expression to be a scalar.  Obviously this does not get us anywhere unless it is possible to compute $(E^S(I))^\infty$, so suppose now that $E^I$ has a maximum eigenvalue of 1 and that $L$ and $R$ are respectively associated left and right eigenvectors.  In this case, the result is easy:  we have that $\expect{O}=L\cdot E^O\cdot R$, which is manifestly finite and well-defined.  In fact, $L$ and $R$ act as the left and right environments of the center site because they contain all of the information of the system left and right of the center site that is needed to compute the expectation value.  Furthermore, this works for multi-site operators, i.e. $\expect{O_1\otimes O_2\cdots\otimes O_n} = L\cdot E^S(O_1)\cdot E^S(O_2)\cdots E^S(O_n)\cdot R$, as illustrated in Fig. \ref{E-Os-matrix}.
+
+\begin{figure}
+\centering
+\includegraphics[width=3in]{drawings/E-O-matrix-car}
+\caption{\label{fig:E-O-matrix} Illustration of $E^S(O)$; note how the left two indices and how the right two indices are joined together, turning the rank-4 tensor into a matrix.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{drawings/E-Os-matrix-car}
+\caption{\label{fig:E-Os-matrix} Illustration of $\left<O_1\otimes O_2\otimes O_3\right>$, given the site tensor $S$ and the left and right environments $L$ and $R$.}
+\end{figure}
 
 Of course, this preceding discussion assumes that $E^S(I)$ is very well behaved, which will not be true in general.  Fortunately, we can \emph{make} it be well behaved.  To do this, we break transitional symmetry in the representation (though not in the state itself) and assume that there are tensors $A_L$, $A_M$ and $A_C$ such that \begin{equation}
 \label{eq:newform}

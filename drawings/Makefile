@@ -10,6 +10,8 @@ contractSOSRight-car.pdf \
 contractSOSRight-nut.pdf \
 contract_sos_left-opt.pdf \
 contract_sos_right-opt.pdf \
+E-O-matrix-car.pdf \
+E-Os-matrix-car.pdf \
 expectation-car.pdf \
 expectation-nut.pdf \
 expectation_boundary_tensors-car.pdf \
