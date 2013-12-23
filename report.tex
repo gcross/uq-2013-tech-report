@@ -269,7 +269,13 @@ The basic idea behind the algorithm is that we start from a trivial representati
 
 \subsection{Expectations}
 
+Once we have found the ground state using the algorithm given in the previous section, we need to extract information from it, which is usually done by computing the expectation values of various operators.  In this section we describe how to compute the expected value of two kinds of operators:  local operators, and matrix product operators.
+
 \subsubsection{Local Operator}
+
+As discussed in Section \ref{sec:local-expectations}, we have that $\expect{O_1\otimes O_2\cdots\otimes O_n} = L\cdot E^S(O_1)\cdot E^S(O_2)\cdots E^S(O_n)\cdot R$; furthermore, in order to normalize this quantity we need to divite it by $\expect{I}^{\otimes n}$.  To compute this, recall that our form of the MPS has infinitely many sites to the left of the center in left-canonical form and infinitely many to the right in right-canonical form.  We will let $S$ be equal to one of these two canonicalized site tensors --- say, the left-canonical one, though works just as well to pick the right-canonical one--- and assume that the system can be adequately represented by infinitely repeating this tensor;  this works as long as we can assume that we can translate ourselves infinitely far away from the arbitrarily chosen center so that we can't feel the effects of it.  We now need to compute the effective environments.  For the left, we are already done because $S$ is in left-canonical form and so $L$ is equal to the (flattened) identity.  For the right, we need to compute the dominant right eigenvector, which we can do using a standard eigensolver;  this then gives us $R$.  Because $L\cdot E^S(I)=L$, we have that $\expect{I^{\otimes n}}=L\cdot E^S(I)^n\cdot R = L\cdot R$.  Thus,
+$$\expect{O_1\otimes\dots\otimes O_n}=\frac{L\cdot E^S(O_1)\cdots E^S(O_n)\cdot R}{L\cdot R}.$$
+Because all $E^S(\cdot)$ have the same size, which is $b^2\times b^2$, this operation takes $O(nb^4)$ time.
 
 \subsubsection{Matrix Product Operator}
 
