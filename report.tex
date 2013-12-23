@@ -87,7 +87,7 @@ Suppose we have a matrix product state defined by some single site tensor $S$, a
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{drawings/E-Os-matrix-car}
-\caption{\label{fig:E-Os-matrix} Illustration of $\left<O_1\otimes O_2\otimes O_3\right>$, given the site tensor $S$ and the left and right environments $L$ and $R$.}
+\caption{\label{fig:E-Os-matrix} Illustration of $\left<O_1\otimes O_2\otimes O_3\right>$, given the state site tensor $S$ and the left and right environments $L$ and $R$.}
 \end{figure}
 
 Of course, this preceding discussion assumes that $E^S(I)$ is very well behaved, which will not be true in general.  Fortunately, we can \emph{make} it be well behaved.  To do this, we break transitional symmetry in the representation (though not in the state itself) and assume that there are tensors $A_L$, $A_M$ and $A_C$ such that \begin{equation}
@@ -208,7 +208,7 @@ The basic idea behind the algorithm is that we start from a trivial representati
 \li         $\proc{Perform-Sweep}(S,L,R,O)$
 \li         $\id{new\_energy} \gets  \proc{Compute-Energy(S,L,R,O)}$
 \end{codebox}
-\caption{\label{code:Sweep-Until-Converged} This function performs sweeps until the state has converged. Here $S$ is the state site tensor, $O$ is the operator site tensor, $L$ and $R$ respectively the left and right operator environments, and $t$ is the threshold that determines when the sweeping has converged; i.e. the state will be declared to have been converged when, after a sweep, the difference between the old value and the new value is below $t$.  This procedure depends on \proc{Perform-Sweep}, which is listed in Figure \ref{code:Perform-Sweep}}
+\caption{\label{code:Sweep-Until-Converged} This function performs sweeps until the state has converged. Here $S$ is the state site tensor, $O$ is the operator site tensor, $L$ and $R$ respectively the left and right operator environments, and $t$ is the threshold that determines when the sweeping has converged; i.e. the state will be declared to have been converged when, after a sweep, the difference between the old value and the new value is below $t$.  This procedure depends on \proc{Perform-Sweep}, which is listed in Fig. \ref{code:Perform-Sweep}.}
 \end{figure}
 
 \begin{figure}
@@ -232,7 +232,7 @@ The basic idea behind the algorithm is that we start from a trivial representati
 \zi $S$ for the initial guess.
 \li $S \gets$ the new minimal eigenvector
 \end{codebox}
-\caption{\label{code:Improve-Site}This procedure finds the state site tensor that minimizes the expectation value of the tensor network illustrated in Figure \ref{fig:expectation-car}. Here $S$ is the state site tensor, $O$ is the operator site tensor, and $L$ and $R$ respectively the left and right operator environments.}
+\caption{\label{code:Improve-Site} This procedure finds the state site tensor that minimizes the expectation value of the tensor network illustrated in Fig. \ref{fig:expectation-car}. Here $S$ is the state site tensor, $O$ is the operator site tensor, and $L$ and $R$ respectively the left and right operator environments.}
 \end{figure}
 
 \begin{figure}
