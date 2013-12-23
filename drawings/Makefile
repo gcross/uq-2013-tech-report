@@ -2,6 +2,8 @@
 	inkscape -f $< -A $@ --export-text-to-path --export-area-page
 
 drawings: \
+canonical-left-car.pdf \
+canonical-right-car.pdf \
 contractSOSLeft-car.pdf \
 contractSOSLeft-nut.pdf \
 contractSOSRight-car.pdf \

@@ -81,7 +81,17 @@ Suppose we have a matrix product state defined by some single site tensor $S$, a
 Of course, this preceding discussion assumes that $E^S(I)$ is very well behaved, which will not be true in general.  Fortunately, we can \emph{make} it be well behaved.  To do this, we break transitional symmetry in the representation (though not in the state itself) and assume that there are tensors $A_L$, $A_M$ and $A_C$ such that \begin{equation}
 \label{eq:newform}
 \psi(\seq{\alpha_i}) = \paren{\prod_{i\in\Z^-}(A_L)^{\alpha_i}}\cdot (A_M)^{\alpha_0}\cdot \paren{\prod_{i\in\Z^+}(A_R)^{\alpha_i}},\end{equation}
-and furthermore $A_L$ is in left-canonical form and $A_R$ is in right-canonical form, which means that $E^{A_L}(I)$ and $E^{A_R}(I)$ both have a maximum eigenvalue of 1 and furthermore $A_L$ satisfies $\sum_{\alpha,i}(A_L^*)^{\alpha}_{ij}(A_L)^{\alpha}_{ij'}=\delta_{jj'}$ and $A_R$ satisfies $\sum_{\alpha,j}(A_R^*)^{\alpha}_{ij}(A_R)^{\alpha}_{i'j}=\delta_{ii'},$  which means that the (flattened) identity matrix is a left-eigenvector of $A_L$ and the right-eigenvector of $A_R$ that are both associated with eigenvalue 1.
+and furthermore $A_L$ is in left-canonical form and $A_R$ is in right-canonical form, which means that $E^{A_L}(I)$ and $E^{A_R}(I)$ both have a maximum eigenvalue of 1 and furthermore $A_L$ satisfies $\sum_{\alpha,i}(A_L^*)^{\alpha}_{ij}(A_L)^{\alpha}_{ij'}=\delta_{jj'}$ and $A_R$ satisfies $\sum_{\alpha,j}(A_R^*)^{\alpha}_{ij}(A_R)^{\alpha}_{i'j}=\delta_{ii'},$  which means that the (flattened) identity matrix is a left-eigenvector of $A_L$ and the right-eigenvector of $A_R$ that are both associated with eigenvalue 1.  These invariants are illustrated in terms of the tensor contractions illustrated in Fig. \ref{fig:canonical-car}.
+\begin{figure}
+\centering
+\begin{subfigure}{3in}
+\includegraphics[width=3in]{drawings/canonical-left-car}
+\end{subfigure}
+\begin{subfigure}{3in}
+\includegraphics[width=3in]{drawings/canonical-right-car}
+\end{subfigure}
+\caption{\label{fig:canonical-car} Illustrations of the property satisfied by respectively the left and right canonical forms of a state site tensor; here \textbf{I} refers to the identity matrix.}
+\end{figure}
 
 Rather than starting from a state that is not in canonical form and then canonicalizing it, we shall \emph{assume} that the state is in canonical form and then only apply operations to preserve this property.  The basic trick that we use is as follows.  First, assume that we have two adjacent copies of the middle site tensor, $S^M$.  Let $U\cdot S\cdot V$ be the singular value decomposition of $S^M$, and then define $S'^L:=U\cdot V$.  We now have that $S^L$ is in left-canonical form, but we need to modify $S^M$ so that the overall state has not changed.  We do this by noting that $S^M=S^L\cdot X$ where $X=V^\dagger\cdot S\cdot V$, so therefore if we let $S'^M:= X\cdot S^M$ then the new state with tensors $S'^L$ and $S'^M$ is equal to the old state with two copies of $A_M$.  We now let $L'_{jj'}:=\sum_{i,j',\alpha}L_{ii'}(S^*)^M_{ij} S^M_{i'j'}.$  Because $S'_L$ is in canonical form, we have that (flattened) $L$ is a left-eigenvector and so $L'=L$.
 
