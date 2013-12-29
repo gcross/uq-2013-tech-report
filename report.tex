@@ -80,13 +80,13 @@ Suppose we have a matrix product state defined by some single site tensor $S$, a
 
 \begin{figure}
 \centering
-\includegraphics[width=3in]{drawings/E-O-matrix-car}
+\includegraphics[width=3in]{drawings/1D/E-O-matrix-car}
 \caption{\label{fig:E-O-matrix} Illustration of $E^S(O)$; note how the left two indices and how the right two indices are joined together, turning the rank-4 tensor into a matrix.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{drawings/E-Os-matrix-car}
+\includegraphics[width=\textwidth]{drawings/1D/E-Os-matrix-car}
 \caption{\label{fig:E-Os-matrix} Illustration of $\left<O_1\otimes O_2\otimes O_3\right>$, given the state site tensor $S$ and the left and right environments $L$ and $R$.}
 \end{figure}
 
@@ -97,10 +97,10 @@ and furthermore $A_L$ is in left-canonical form and $A_R$ is in right-canonical 
 \begin{figure}
 \centering
 \begin{subfigure}{3in}
-\includegraphics[width=3in]{drawings/canonical-left-car}
+\includegraphics[width=3in]{drawings/1D/canonical-left-car}
 \end{subfigure}
 \begin{subfigure}{3in}
-\includegraphics[width=3in]{drawings/canonical-right-car}
+\includegraphics[width=3in]{drawings/1D/canonical-right-car}
 \end{subfigure}
 \caption{\label{fig:canonical-car} Illustrations of the property satisfied by respectively the left and right canonical forms of a state site tensor; here \textbf{I} refers to the identity matrix.}
 \end{figure}
@@ -134,36 +134,36 @@ Finally, Figure \ref{fig:matmul-car} illustrates a tensor network that effective
 \begin{figure}
 \centering
 \begin{subfigure}{2in}
-\includegraphics[width=2in]{drawings/state_site_tensor-car}
+\includegraphics[width=2in]{drawings/1D/state_site_tensor-car}
 \end{subfigure}
 \begin{subfigure}{2in}
-\includegraphics[width=2in]{drawings/operator_site_tensor-car}
+\includegraphics[width=2in]{drawings/1D/operator_site_tensor-car}
 \end{subfigure}
 \caption{\label{fig:site-tensors-car} Illustrations of the state and operator site tensors.}
 \end{figure}
 
 \begin{figure}\begin{center}
-\includegraphics[width=\diagramwidth]{drawings/expectation_boundary_tensors-car}
+\includegraphics[width=\diagramwidth]{drawings/1D/expectation_boundary_tensors-car}
 \caption{\label{fig:environment-tensors-car} Illustration of the environment tensors.}
 \end{center}\end{figure}
 
 \begin{figure}\begin{center}
-\includegraphics[width=\diagramwidth]{drawings/expectation-car}
+\includegraphics[width=\diagramwidth]{drawings/1D/expectation-car}
 \caption{\label{fig:expectation-car} This diagram illustrates the tensor network contraction that obtains the expected value of the observable.  $L$ and $R$ are the environment tensors and $O$ and $S$ are the respective operator and state tensors; $S^*$ denotes the conjugate of $S$.  Note the existence of the following two conventions:  first that the left bandwidth index comes before the right bandwidth index which comes before the physical dimension or dimensions, and that the operator index comes before the state index which comes before the conjugate state index.}
 \end{center}\end{figure}
 
 \begin{figure}\begin{center}
-\includegraphics[width=\diagramwidth]{drawings/contractSOSLeft-car}
+\includegraphics[width=\diagramwidth]{drawings/1D/contractSOSLeft-car}
 \caption{\label{fig:contractSOSLeft-car} This diagram illustrates the contraction used to absorb a site into the left environment.}
 \end{center}\end{figure}
 
 \begin{figure}\begin{center}
-\includegraphics[width=\diagramwidth]{drawings/contractSOSRight-car}
+\includegraphics[width=\diagramwidth]{drawings/1D/contractSOSRight-car}
 \caption{\label{fig:contractSOSRight-car}This diagram illustrates the contraction used to absorb a site into the right environment.}
 \end{center}\end{figure}
 
 \begin{figure}\begin{center}
-\includegraphics[width=\diagramwidth]{drawings/matmul-car}
+\includegraphics[width=\diagramwidth]{drawings/1D/matmul-car}
 \caption{\label{fig:matmul-car}This diagram illustrates how to convert the environment into a matrix.  The bottom hole is where $S$ would normally be and the top hole is where $S^*$ would normally be.  You can use this network for matrix multiplication by inserting $S$ into the bottom hole and then contracting to obtain the result in the top hole.}
 \end{center}\end{figure}
 
@@ -293,36 +293,36 @@ The tensor contractions in this appendix are ones that have been optimized for e
 \begin{figure}
 \centering
 \begin{subfigure}{2in}
-\includegraphics[width=2in]{drawings/state_site_tensor-nut}
+\includegraphics[width=2in]{drawings/1D/state_site_tensor-nut}
 \end{subfigure}
 \begin{subfigure}{2in}
-\includegraphics[width=2in]{drawings/operator_site_tensor-nut}
+\includegraphics[width=2in]{drawings/1D/operator_site_tensor-nut}
 \end{subfigure}
 \caption{\label{fig:site-tensors-nut} Illustrations of the state and operator site tensors.}
 \end{figure}
 
 \begin{figure}\begin{center}
-\includegraphics[width=\diagramwidth]{drawings/expectation_boundary_tensors-nut}
+\includegraphics[width=\diagramwidth]{drawings/1D/expectation_boundary_tensors-nut}
 \caption{\label{fig:environment-tensors-nut} This diagram illustrates the environment tensors.}
 \end{center}\end{figure}
 
 \begin{figure}\begin{center}
-\includegraphics[width=\diagramwidth]{drawings/expectation-nut}
+\includegraphics[width=\diagramwidth]{drawings/1D/expectation-nut}
 \caption{\label{fig:expectation-nut} This diagram illustrates the contraction that computes the expectation value.}
 \end{center}\end{figure}
 
 \begin{figure}\begin{center}
-\includegraphics[width=\diagramwidth]{drawings/contract_sos_left-opt}
+\includegraphics[width=\diagramwidth]{drawings/1D/contract_sos_left-opt}
 \caption{\label{fig:contract_sos_left-nut} This diagram illustrates the contraction used to absorb a site into the left environment.}
 \end{center}\end{figure}
 
 \begin{figure}\begin{center}
-\includegraphics[width=\diagramwidth]{drawings/contract_sos_right-opt}
+\includegraphics[width=\diagramwidth]{drawings/1D/contract_sos_right-opt}
 \caption{\label{fig:contract_sos_right-nut} This diagram illustrates the contraction used to absorb a site into the right environment.}
 \end{center}\end{figure}
 
 \begin{figure}\begin{center}
-\includegraphics[width=\diagramwidth]{drawings/iteration-opt}
+\includegraphics[width=\diagramwidth]{drawings/1D/iteration-opt}
 \caption{\label{fig:iteration-nut} This diagram illustrates the contraction used to perform the matrix multiplication used by the ARPACK eigensolver.}
 \end{center}\end{figure}
 
